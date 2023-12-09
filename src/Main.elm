@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Days.DayOne
 import Html exposing (Html)
 import Html.Attributes as Attrs
 import Html.Events as Events
@@ -18,8 +19,7 @@ import Utils.Html.Events as Events
 
 puzzles : List Puzzle
 puzzles =
-    [ { identifier = "test-success", label = "Test success", solution = \_ -> Ok "You did it!" }
-    , { identifier = "test-failure", label = "Test failure", solution = \_ -> Err "Lol you suck!" }
+    [ { identifier = "day1-1", label = "Day One (1)", solution = Days.DayOne.first }
     ]
 
 
