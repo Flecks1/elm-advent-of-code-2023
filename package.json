@@ -1,0 +1,19 @@
+{
+  "name": "elm-advent-of-code-2023",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "build": "elm make src/Main.elm --debug --output=dist/advent.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Flecks1/elm-advent-of-code-2023.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Flecks1/elm-advent-of-code-2023/issues"
+  },
+  "homepage": "https://github.com/Flecks1/elm-advent-of-code-2023#readme"
+}
