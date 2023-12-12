@@ -1,7 +1,11 @@
 module Main exposing (main)
 
 import Browser
+import Days.DayFive
+import Days.DayFour
 import Days.DayOne
+import Days.DayThree
+import Days.DayTwo
 import Html exposing (Html)
 import Html.Attributes as Attrs
 import Html.Events as Events
@@ -19,7 +23,16 @@ import Utils.Html.Events as Events
 
 puzzles : List Puzzle
 puzzles =
-    [ { identifier = "day1-1", label = "Day One (1)", solution = Days.DayOne.first }
+    [ { identifier = "day1-1", label = "Day 1", solution = Days.DayOne.first }
+    , { identifier = "day1-2", label = "Day 1 (Part Two)", solution = Days.DayOne.second }
+    , { identifier = "day2-1", label = "Day 2", solution = Days.DayTwo.first }
+    , { identifier = "day2-2", label = "Day 2 (Part Two)", solution = Days.DayTwo.second }
+    , { identifier = "day3-1", label = "Day 3", solution = Days.DayThree.first }
+    , { identifier = "day3-2", label = "Day 3 (Part Two)", solution = Days.DayThree.second }
+    , { identifier = "day4-1", label = "Day 4", solution = Days.DayFour.first }
+    , { identifier = "day4-2", label = "Day 4 (Part Two)", solution = Days.DayFour.second }
+    , { identifier = "day5-1", label = "Day 5", solution = Days.DayFive.first }
+    , { identifier = "day5-2", label = "Day 5 (Part Two)", solution = Days.DayFive.second }
     ]
 
 
@@ -83,7 +96,7 @@ view model =
         puzzleOption puzzle =
             Html.option
                 [ Attrs.value puzzle.identifier, Attrs.selected (Just puzzle.identifier == selectedPuzzleIdentifier) ]
-                [ Html.text puzzle.identifier ]
+                [ Html.text puzzle.label ]
 
         puzzleSelector =
             Html.div [ Attrs.class "form-floating mb-3" ]
@@ -95,7 +108,7 @@ view model =
 
         inputField =
             Html.div [ Attrs.class "form-floating mb-3" ]
-                [ Html.textarea [ Attrs.name "input", Attrs.class "form-control", Attrs.rows 8, Attrs.cols 40, Events.onInput InputText ]
+                [ Html.textarea [ Attrs.name "input", Attrs.class "form-control", Attrs.style "height" "400px", Events.onInput InputText ]
                     [ Html.text model.input ]
                 , Html.label [ Attrs.for "input" ] [ Html.text "Input" ]
                 ]
