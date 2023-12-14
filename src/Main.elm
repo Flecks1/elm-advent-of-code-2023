@@ -4,6 +4,8 @@ import Browser
 import Days.DayFive
 import Days.DayFour
 import Days.DayOne
+import Days.DaySeven
+import Days.DaySix
 import Days.DayThree
 import Days.DayTwo
 import Html exposing (Html)
@@ -33,6 +35,10 @@ puzzles =
     , { identifier = "day4-2", label = "Day 4 (Part Two)", solution = Days.DayFour.second }
     , { identifier = "day5-1", label = "Day 5", solution = Days.DayFive.first }
     , { identifier = "day5-2", label = "Day 5 (Part Two)", solution = Days.DayFive.second }
+    , { identifier = "day6-1", label = "Day 6", solution = Days.DaySix.first }
+    , { identifier = "day6-2", label = "Day 6 (Part Two)", solution = Days.DaySix.second }
+    , { identifier = "day7-1", label = "Day 7", solution = Days.DaySeven.first }
+    , { identifier = "day7-2", label = "Day 7 (Part Two)", solution = Days.DaySeven.second }
     ]
 
 
