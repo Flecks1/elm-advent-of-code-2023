@@ -1,4 +1,4 @@
-module Days.DayFive exposing (first, second)
+module Days.Day5 exposing (first, second)
 
 import Html exposing (a)
 import List.Extra as List
@@ -22,7 +22,7 @@ first =
 
 second : Puzzle.Solution
 second input =
-    -- TODO: add ports / custom update function for this one so we can offload the task of keeping up with currently handled chunk and the remaining ones to the consuming website
+    -- This one takes STUPIDLY long to run
     case parseAlmanach seedRangeListParser input of
         Ok almanach ->
             let

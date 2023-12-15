@@ -1,4 +1,4 @@
-module Days.DayOne exposing (first, second)
+module Days.Day1 exposing (first, second)
 
 import Parser
 import Parser.Advanced

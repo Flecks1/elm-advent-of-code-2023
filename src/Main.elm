@@ -1,13 +1,14 @@
 module Main exposing (main)
 
 import Browser
-import Days.DayFive
-import Days.DayFour
-import Days.DayOne
-import Days.DaySeven
-import Days.DaySix
-import Days.DayThree
-import Days.DayTwo
+import Days.Day1
+import Days.Day2
+import Days.Day3
+import Days.Day4
+import Days.Day5
+import Days.Day6
+import Days.Day7
+import Days.Day8
 import Html exposing (Html)
 import Html.Attributes as Attrs
 import Html.Events as Events
@@ -25,20 +26,22 @@ import Utils.Html.Events as Events
 
 puzzles : List Puzzle
 puzzles =
-    [ { identifier = "day1-1", label = "Day 1", solution = Days.DayOne.first }
-    , { identifier = "day1-2", label = "Day 1 (Part Two)", solution = Days.DayOne.second }
-    , { identifier = "day2-1", label = "Day 2", solution = Days.DayTwo.first }
-    , { identifier = "day2-2", label = "Day 2 (Part Two)", solution = Days.DayTwo.second }
-    , { identifier = "day3-1", label = "Day 3", solution = Days.DayThree.first }
-    , { identifier = "day3-2", label = "Day 3 (Part Two)", solution = Days.DayThree.second }
-    , { identifier = "day4-1", label = "Day 4", solution = Days.DayFour.first }
-    , { identifier = "day4-2", label = "Day 4 (Part Two)", solution = Days.DayFour.second }
-    , { identifier = "day5-1", label = "Day 5", solution = Days.DayFive.first }
-    , { identifier = "day5-2", label = "Day 5 (Part Two)", solution = Days.DayFive.second }
-    , { identifier = "day6-1", label = "Day 6", solution = Days.DaySix.first }
-    , { identifier = "day6-2", label = "Day 6 (Part Two)", solution = Days.DaySix.second }
-    , { identifier = "day7-1", label = "Day 7", solution = Days.DaySeven.first }
-    , { identifier = "day7-2", label = "Day 7 (Part Two)", solution = Days.DaySeven.second }
+    [ { identifier = "day1-1", label = "Day 1", solution = Days.Day1.first }
+    , { identifier = "day1-2", label = "Day 1 (Part Two)", solution = Days.Day1.second }
+    , { identifier = "day2-1", label = "Day 2", solution = Days.Day2.first }
+    , { identifier = "day2-2", label = "Day 2 (Part Two)", solution = Days.Day2.second }
+    , { identifier = "day3-1", label = "Day 3", solution = Days.Day3.first }
+    , { identifier = "day3-2", label = "Day 3 (Part Two)", solution = Days.Day3.second }
+    , { identifier = "day4-1", label = "Day 4", solution = Days.Day4.first }
+    , { identifier = "day4-2", label = "Day 4 (Part Two)", solution = Days.Day4.second }
+    , { identifier = "day5-1", label = "Day 5", solution = Days.Day5.first }
+    , { identifier = "day5-2", label = "Day 5 (Part Two) ⚠ Takes a stupidly long time to run", solution = Days.Day5.second }
+    , { identifier = "day6-1", label = "Day 6", solution = Days.Day6.first }
+    , { identifier = "day6-2", label = "Day 6 (Part Two)", solution = Days.Day6.second }
+    , { identifier = "day7-1", label = "Day 7", solution = Days.Day7.first }
+    , { identifier = "day7-2", label = "Day 7 (Part Two)", solution = Days.Day7.second }
+    , { identifier = "day8-1", label = "Day 8", solution = Days.Day8.first }
+    , { identifier = "day8-2", label = "Day 8 (Part Two)", solution = Days.Day8.second }
     ]
 
 

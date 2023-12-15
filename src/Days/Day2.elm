@@ -1,4 +1,4 @@
-module Days.DayTwo exposing (first, second)
+module Days.Day2 exposing (first, second)
 
 import List.Extra as List
 import Parser exposing ((|.), (|=), Parser, Step(..))

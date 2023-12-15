@@ -1,4 +1,4 @@
-module Days.DayThree exposing (first, second)
+module Days.Day3 exposing (first, second)
 
 import Dict exposing (Dict)
 import List.Extra as List

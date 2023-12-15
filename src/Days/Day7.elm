@@ -1,4 +1,4 @@
-module Days.DaySeven exposing (first, second)
+module Days.Day7 exposing (first, second)
 
 import List.Extra as List
 import Maybe.Extra as Maybe
@@ -6,6 +6,7 @@ import Parser exposing ((|.), (|=), Parser, Step(..))
 import Puzzle
 import Result.Extra as Result
 import Set
+import Utils.Parser as Parser
 
 
 first : Puzzle.Solution
@@ -123,7 +124,11 @@ handleWildCards shouldHandleWildcards cardGroups =
 
 handParser : ShouldHandleWildcards -> Parser ( List Int, Hand )
 handParser shouldHandleWildcards =
-    symbolsParser [ 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2' ]
+    let
+        acceptedChars =
+            "AKQJT98765432" |> String.foldl Set.insert Set.empty
+    in
+    Parser.string (\char -> Set.member char acceptedChars)
         |> Parser.andThen
             -- Transform each card symbol into an Int representing its value
             (toHandCardValues shouldHandleWildcards
@@ -144,22 +149,6 @@ handParser shouldHandleWildcards =
                     )
                 >> Result.unpack Parser.problem Parser.succeed
             )
-
-
-symbolsParser : List Char -> Parser String
-symbolsParser acceptedSymbols =
-    Parser.loop ""
-        (\symbols ->
-            Parser.oneOf
-                [ acceptedSymbols
-                    |> Set.fromList
-                    |> Set.toList
-                    |> List.map (String.fromChar >> (\symbol -> Parser.succeed symbol |. Parser.symbol symbol))
-                    |> Parser.oneOf
-                    |> Parser.map (\symbol -> symbols ++ symbol |> Loop)
-                , Parser.succeed (Done symbols)
-                ]
-        )
 
 
 cardGroupsToHand : List (List CardValue) -> Result String Hand
