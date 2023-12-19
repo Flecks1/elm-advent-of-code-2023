@@ -2,6 +2,10 @@ module Main exposing (main)
 
 import Browser
 import Days.Day1
+import Days.Day10
+import Days.Day11
+import Days.Day12
+import Days.Day13
 import Days.Day2
 import Days.Day3
 import Days.Day4
@@ -9,6 +13,7 @@ import Days.Day5
 import Days.Day6
 import Days.Day7
 import Days.Day8
+import Days.Day9
 import Html exposing (Html)
 import Html.Attributes as Attrs
 import Html.Events as Events
@@ -42,6 +47,15 @@ puzzles =
     , { identifier = "day7-2", label = "Day 7 (Part Two)", solution = Days.Day7.second }
     , { identifier = "day8-1", label = "Day 8", solution = Days.Day8.first }
     , { identifier = "day8-2", label = "Day 8 (Part Two)", solution = Days.Day8.second }
+    , { identifier = "day9-1", label = "Day 9", solution = Days.Day9.first }
+    , { identifier = "day9-2", label = "Day 9 (Part Two)", solution = Days.Day9.second }
+    , { identifier = "day10-1", label = "Day 10", solution = Days.Day10.first }
+    , { identifier = "day10-2", label = "Day 10 (Part Two)", solution = Days.Day10.second }
+    , { identifier = "day11-1", label = "Day 11", solution = Days.Day11.first }
+    , { identifier = "day11-2", label = "Day 11 (Part Two)", solution = Days.Day11.second }
+    , { identifier = "day12-1", label = "Day 12", solution = Days.Day12.first }
+    , { identifier = "day13-1", label = "Day 13", solution = Days.Day13.first }
+    , { identifier = "day13-2", label = "Day 13 (Part Two)", solution = Days.Day13.second }
     ]
 
 
@@ -117,7 +131,7 @@ view model =
 
         inputField =
             Html.div [ Attrs.class "form-floating mb-3" ]
-                [ Html.textarea [ Attrs.name "input", Attrs.class "form-control", Attrs.style "height" "400px", Events.onInput InputText ]
+                [ Html.textarea [ Attrs.name "input", Attrs.class "form-control", Attrs.style "height" "400px", Attrs.style "font-family" "monospace", Events.onInput InputText ]
                     [ Html.text model.input ]
                 , Html.label [ Attrs.for "input" ] [ Html.text "Input" ]
                 ]

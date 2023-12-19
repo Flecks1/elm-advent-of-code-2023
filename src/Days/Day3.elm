@@ -3,8 +3,8 @@ module Days.Day3 exposing (first, second)
 import Dict exposing (Dict)
 import List.Extra as List
 import Maybe.Extra as Maybe
-import Parser.Advanced
 import Puzzle
+import Utils.Various exposing (iff)
 
 
 first : Puzzle.Solution
@@ -77,15 +77,6 @@ type alias Map =
 
 type alias Part =
     { number : Int, x1 : Int, x2 : Int, y1 : Int, y2 : Int }
-
-
-iff : Bool -> a -> a -> a
-iff pred ifTrue ifFalse =
-    if pred then
-        ifTrue
-
-    else
-        ifFalse
 
 
 makeMap : String -> Map

@@ -21,31 +21,33 @@ first =
 
         stopIfWeReachedTheEnd state =
             if state.node == end then
-                List.Stop state
+                List.Stop { state | done = True }
 
             else
                 List.Continue state
 
-        step tree move { steps, node } =
-            { node = node |> navigateTree tree move, steps = steps + 1 }
+        step tree move ({ node, steps } as state) =
+            { state | node = node |> navigateTree tree move, steps = steps + 1 }
                 |> stopIfWeReachedTheEnd
+
+        loop state ({ moves, tree } as x) =
+            let
+                newState =
+                    moves |> List.stoppableFoldl (step tree) state
+            in
+            if newState.done then
+                newState.steps |> String.fromInt
+
+            else
+                loop newState x
     in
     parsePuzzleInput
-        >> Result.map
-            (\{ moves, tree } ->
-                moves
-                    |> List.stoppableFoldl (step tree) { steps = 0, node = start }
-                    |> .steps
-                    |> String.fromInt
-            )
+        >> Result.map (loop { steps = 0, node = start, done = False })
 
 
 second : Puzzle.Solution
-second input =
+second =
     let
-        puzzleInput =
-            parsePuzzleInput input |> Result.withDefault (PuzzleInput [] Dict.empty)
-
         getAllStartNodes =
             Dict.foldr
                 (\node _ paths ->
@@ -95,12 +97,13 @@ second input =
                         movesAmount =
                             List.length moves
                     in
-                    cycles |> List.map (\n -> n // movesAmount) |> List.product |> (*) movesAmount |> String.fromInt |> Ok
+                    cycles |> List.map (\n -> n // movesAmount) |> List.product |> (*) movesAmount |> String.fromInt
 
                 Nothing ->
                     loop x newState
     in
-    loop puzzleInput { steps = 0, paths = getAllStartNodes puzzleInput.tree, done = False }
+    parsePuzzleInput
+        >> Result.map (\puzzleInput -> loop puzzleInput { steps = 0, paths = getAllStartNodes puzzleInput.tree, done = False })
 
 
 navigateTree : Tree -> Move -> Node -> Node
