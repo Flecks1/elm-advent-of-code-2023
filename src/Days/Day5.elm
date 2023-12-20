@@ -1,19 +1,44 @@
 module Days.Day5 exposing (first, second)
 
-import Html exposing (a)
+import Html exposing (a, source)
+import List exposing (range)
 import List.Extra as List
 import Maybe.Extra as Maybe
 import Parser exposing ((|.), (|=), Parser, Step(..))
 import Puzzle
+import Utils.Various exposing (iff)
 
 
 first : Puzzle.Solution
 first =
+    let
+        useMappings : List MappingRange -> Int -> Int
+        useMappings mappingRanges source =
+            let
+                matchingDefinition =
+                    mappingRanges |> List.find (\{ sourceStart, rangeLength } -> source >= sourceStart && source < sourceStart + rangeLength)
+            in
+            case matchingDefinition of
+                Just { sourceStart, destinationStart } ->
+                    source - sourceStart + destinationStart
+
+                Nothing ->
+                    source
+
+        convertSeedToLocation maps =
+            useMappings maps.seedToSoil
+                >> useMappings maps.soilToFertilizer
+                >> useMappings maps.fertilizerToWater
+                >> useMappings maps.waterToLight
+                >> useMappings maps.lightToTemperature
+                >> useMappings maps.temperatureToHumidity
+                >> useMappings maps.humidityToLocation
+    in
     parseAlmanach seedSimpleListParser
         >> Result.andThen
-            (\maps ->
-                maps.seeds
-                    |> List.map (convertSeedToLocation maps)
+            (\almanach ->
+                almanach.seeds
+                    |> List.map (convertSeedToLocation almanach)
                     |> List.minimum
                     |> Maybe.map String.fromInt
                     |> Result.fromMaybe "Couldn't find an answer!?"
@@ -22,84 +47,97 @@ first =
 
 second : Puzzle.Solution
 second input =
+    let
+        splitAndMapRange { sourceStart, destinationStart, rangeLength } { mappedRanges, start, end } =
+            let
+                -- start = 79, end = 93
+                -- sourceStart = 50, destinationStart = 52, rangeLength = 48
+                -- mappingRangeEnd = 98
+                mappingRangeEnd =
+                    sourceStart + rangeLength
+
+                unmappedRange =
+                    if start < sourceStart then
+                        Just (Range start (min end (sourceStart - 1)))
+
+                    else
+                        Nothing
+
+                mappedRange =
+                    if start <= mappingRangeEnd && end >= sourceStart then
+                        Just (Range (max start sourceStart - sourceStart + destinationStart) (destinationStart + min (end - sourceStart) rangeLength))
+
+                    else
+                        Nothing
+            in
+            iff (end > mappingRangeEnd) List.Continue List.Stop <|
+                { mappedRanges = List.filterMap identity [ unmappedRange, mappedRange ] ++ mappedRanges
+                , start = min end (sourceStart + rangeLength + 1)
+                , end = end
+                }
+
+        mapRange mappingRanges { start, end } =
+            let
+                _ =
+                    Debug.log "mapped range" { start = start, end = end, mappedRanges = mappedRanges }
+
+                mappedRanges =
+                    mappingRanges |> List.stoppableFoldl splitAndMapRange { mappedRanges = [], start = start, end = end } |> .mappedRanges
+            in
+            mappedRanges
+
+        recursivelyMapRanges mappings ranges =
+            case mappings of
+                mappingRanges :: restOfMappingRanges ->
+                    let
+                        _ =
+                            Debug.log "using a new mapping!" mappingRanges
+                    in
+                    List.concatMap (mapRange mappingRanges) ranges
+                        |> List.sortBy .start
+                        |> recursivelyMapRanges restOfMappingRanges
+
+                [] ->
+                    ranges |> List.minimumBy .start |> Maybe.unwrap 0 .start |> String.fromInt |> Ok
+    in
     -- This one takes STUPIDLY long to run
     case parseAlmanach seedRangeListParser input of
-        Ok almanach ->
-            let
-                amountOfChunks =
-                    List.length almanach.seeds
-            in
-            almanach.seeds
-                |> List.foldl (findMinimumLocationFromSeedRange almanach) { minimum = 2147483646, n = 0, amountOfChunks = amountOfChunks }
-                |> .minimum
-                |> String.fromInt
-                |> Ok
+        Ok { seeds, seedToSoil, soilToFertilizer, fertilizerToWater, waterToLight, lightToTemperature, temperatureToHumidity, humidityToLocation } ->
+            seeds |> recursivelyMapRanges [ seedToSoil, soilToFertilizer, fertilizerToWater, waterToLight, lightToTemperature, temperatureToHumidity, humidityToLocation ]
 
         Err err ->
             Err err
 
 
-findMinimumLocationFromSeedRange : Almanach a -> SeedRange -> { minimum : Int, n : Int, amountOfChunks : Int } -> { minimum : Int, n : Int, amountOfChunks : Int }
-findMinimumLocationFromSeedRange maps ({ start, max } as range) info =
-    if start == max then
-        let
-            _ =
-                Debug.log "" { minimum = info.minimum, percentage = toFloat (info.n + 1) / toFloat info.amountOfChunks * 100.0 }
-        in
-        { info | n = info.n + 1 }
-
-    else
-        findMinimumLocationFromSeedRange maps { range | start = start + 1 } { info | minimum = min (convertSeedToLocation maps start) info.minimum }
-
-
-convertSeedToLocation : Almanach a -> Int -> Int
-convertSeedToLocation maps seed =
-    seed |> convert maps.seedToSoil |> convert maps.soilToFert |> convert maps.fertToWata |> convert maps.wataToLite |> convert maps.liteToTemp |> convert maps.tempToHumy |> convert maps.humyToLcat
-
-
-convert : List MapDefinition -> Int -> Int
-convert definitions source =
-    let
-        matchingDefinition =
-            definitions |> List.find (\{ sourceStart, rangeLength } -> source >= sourceStart && source < sourceStart + rangeLength)
-    in
-    case matchingDefinition of
-        Just { sourceStart, destinationStart } ->
-            source - sourceStart + destinationStart
-
-        Nothing ->
-            source
-
-
 type alias Almanach seedType =
     { seeds : List seedType
-    , seedToSoil : List MapDefinition
-    , soilToFert : List MapDefinition
-    , fertToWata : List MapDefinition
-    , wataToLite : List MapDefinition
-    , liteToTemp : List MapDefinition
-    , tempToHumy : List MapDefinition
-    , humyToLcat : List MapDefinition
+    , seedToSoil : List MappingRange
+    , soilToFertilizer : List MappingRange
+    , fertilizerToWater : List MappingRange
+    , waterToLight : List MappingRange
+    , lightToTemperature : List MappingRange
+    , temperatureToHumidity : List MappingRange
+    , humidityToLocation : List MappingRange
     }
 
 
-type alias SeedRange =
-    { start : Int, max : Int }
+type alias Range =
+    { start : Int, end : Int }
 
 
-type alias MapDefinition =
+type alias MappingRange =
     { destinationStart : Int
     , sourceStart : Int
     , rangeLength : Int
     }
 
 
-mapDefinitionsParser : Parser (List MapDefinition)
+mapDefinitionsParser : Parser (List MappingRange)
 mapDefinitionsParser =
     Parser.loop []
         (\definitions ->
             Parser.oneOf
-                [ Parser.succeed (\x y z -> MapDefinition x y z :: definitions |> Loop)
+                [ Parser.succeed (\x y z -> MappingRange x y z :: definitions |> Loop)
                     |= Parser.int
                     |. Parser.spaces
                     |= Parser.int
@@ -126,34 +164,18 @@ seedSimpleListParser =
         )
 
 
-chunkUpRanges : List SeedRange -> List SeedRange
-chunkUpRanges ranges =
-    let
-        chunkSize =
-            50000
-
-        makeChunks chunks { start, max } =
-            if max - start <= chunkSize then
-                { start = start, max = max } :: chunks
-
-            else
-                makeChunks ({ start = start, max = start + chunkSize } :: chunks) { start = start + chunkSize, max = max }
-    in
-    ranges |> List.concatMap (makeChunks [])
-
-
-seedRangeListParser : Parser (List SeedRange)
+seedRangeListParser : Parser (List Range)
 seedRangeListParser =
     Parser.loop []
         (\seeds ->
             Parser.oneOf
-                [ Parser.succeed (\start length -> SeedRange start (start + length) :: seeds |> Loop)
+                [ Parser.succeed (\start length -> Range start (start + length) :: seeds |> Loop)
                     |. Parser.symbol " "
                     |= Parser.int
                     |. Parser.symbol " "
                     |= Parser.int
                     |> Parser.backtrackable
-                , Parser.symbol "\n" |> Parser.map (\_ -> seeds |> chunkUpRanges |> Done) |> Parser.backtrackable
+                , Parser.symbol "\n" |> Parser.map (\_ -> seeds |> List.sortBy .start |> Done) |> Parser.backtrackable
                 ]
         )
 
