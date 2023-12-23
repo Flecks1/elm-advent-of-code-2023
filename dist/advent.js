@@ -12283,6 +12283,146 @@ var $author$project$Days$Day13$puzzleHelper = function (shouldHandleSmudges) {
 				A2($elm$core$Basics$composeR, $elm$core$List$sum, $elm$core$String$fromInt))));
 };
 var $author$project$Days$Day13$first = $author$project$Days$Day13$puzzleHelper(false);
+var $author$project$Days$Day14$Mobile = {$: 'Mobile'};
+var $author$project$Days$Day14$calculateLoad = function (_v0) {
+	var positions = _v0.positions;
+	var yBoundary = _v0.yBoundary;
+	var bottomBorder = yBoundary + 1;
+	var incrementLoad = F3(
+		function (_v1, rock, load) {
+			var y = _v1.b;
+			return _Utils_eq(rock, $author$project$Days$Day14$Mobile) ? (load + (bottomBorder - y)) : load;
+		});
+	return A3($elm$core$Dict$foldl, incrementLoad, 0, positions);
+};
+var $author$project$Days$Day14$Fixed = {$: 'Fixed'};
+var $author$project$Days$Day14$makeMap = function () {
+	var handleSymbol = F4(
+		function (x, y, symbol, map) {
+			var positions = map.positions;
+			var xBoundary = map.xBoundary;
+			var yBoundary = map.yBoundary;
+			var newMap = _Utils_update(
+				map,
+				{
+					xBoundary: A2($elm$core$Basics$max, x, xBoundary),
+					yBoundary: A2($elm$core$Basics$max, y, yBoundary)
+				});
+			switch (symbol.valueOf()) {
+				case '#':
+					return _Utils_update(
+						newMap,
+						{
+							positions: A3(
+								$elm$core$Dict$insert,
+								_Utils_Tuple2(x, y),
+								$author$project$Days$Day14$Fixed,
+								positions)
+						});
+				case 'O':
+					return _Utils_update(
+						newMap,
+						{
+							positions: A3(
+								$elm$core$Dict$insert,
+								_Utils_Tuple2(x, y),
+								$author$project$Days$Day14$Mobile,
+								positions)
+						});
+				default:
+					return newMap;
+			}
+		});
+	var handleRow = F3(
+		function (y, row, state) {
+			return A3(
+				$elm_community$list_extra$List$Extra$indexedFoldl,
+				F2(
+					function (x, symbol) {
+						return A3(handleSymbol, x, y, symbol);
+					}),
+				state,
+				$elm$core$String$toList(row));
+		});
+	return A2(
+		$elm$core$Basics$composeR,
+		$elm$core$String$split('\n'),
+		A2(
+			$elm_community$list_extra$List$Extra$indexedFoldl,
+			handleRow,
+			{positions: $elm$core$Dict$empty, xBoundary: 0, yBoundary: 0}));
+}();
+var $author$project$Days$Day14$insertFixedY = F2(
+	function (_v0, fixedPositions) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return A3($elm$core$Dict$insert, x, y, fixedPositions);
+	});
+var $author$project$Days$Day14$readFixedY = F4(
+	function (boundary, increment, _v0, fixedPositions) {
+		var x = _v0.a;
+		return _Utils_Tuple2(
+			x,
+			A3(
+				$elm_community$maybe_extra$Maybe$Extra$unwrap,
+				boundary,
+				$elm$core$Basics$add(increment),
+				A2($elm$core$Dict$get, x, fixedPositions)));
+	});
+var $author$project$Days$Day14$tilt = F4(
+	function (readNewFixedPosition, insertFixedPosition, foldFunction, map) {
+		var moveRocks = F3(
+			function (_v0, rock, _v1) {
+				var x = _v0.a;
+				var y = _v0.b;
+				var fixedPoints = _v1.a;
+				var currentMap = _v1.b;
+				if (_Utils_eq(rock, $author$project$Days$Day14$Mobile)) {
+					var newPosition = A2(
+						readNewFixedPosition,
+						_Utils_Tuple2(x, y),
+						fixedPoints);
+					return _Utils_Tuple2(
+						A2(insertFixedPosition, newPosition, fixedPoints),
+						A3($elm$core$Dict$insert, newPosition, $author$project$Days$Day14$Mobile, currentMap));
+				} else {
+					return _Utils_Tuple2(
+						A2(
+							insertFixedPosition,
+							_Utils_Tuple2(x, y),
+							fixedPoints),
+						A3(
+							$elm$core$Dict$insert,
+							_Utils_Tuple2(x, y),
+							$author$project$Days$Day14$Fixed,
+							currentMap));
+				}
+			});
+		return _Utils_update(
+			map,
+			{
+				positions: A3(
+					foldFunction,
+					moveRocks,
+					_Utils_Tuple2($elm$core$Dict$empty, $elm$core$Dict$empty),
+					map.positions).b
+			});
+	});
+var $author$project$Days$Day14$tiltNorth = A3(
+	$author$project$Days$Day14$tilt,
+	A2($author$project$Days$Day14$readFixedY, 0, 1),
+	$author$project$Days$Day14$insertFixedY,
+	$elm$core$Dict$foldl);
+var $author$project$Days$Day14$first = A2(
+	$elm$core$Basics$composeR,
+	$author$project$Days$Day14$makeMap,
+	A2(
+		$elm$core$Basics$composeR,
+		$author$project$Days$Day14$tiltNorth,
+		A2(
+			$elm$core$Basics$composeR,
+			$author$project$Days$Day14$calculateLoad,
+			A2($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$core$Result$Ok))));
 var $author$project$Days$Day2$Colors = F3(
 	function (red, green, blue) {
 		return {blue: blue, green: green, red: red};
@@ -14579,6 +14719,284 @@ var $author$project$Days$Day10$second = function (input) {
 };
 var $author$project$Days$Day11$second = $author$project$Days$Day11$puzzleHelper(999999);
 var $author$project$Days$Day13$second = $author$project$Days$Day13$puzzleHelper(true);
+var $author$project$Days$Day14$draw = function (_v0) {
+	var positions = _v0.positions;
+	var xBoundary = _v0.xBoundary;
+	var yBoundary = _v0.yBoundary;
+	var getCharacter = F2(
+		function (x, y) {
+			var _v1 = A2(
+				$elm$core$Dict$get,
+				_Utils_Tuple2(x, y),
+				positions);
+			if (_v1.$ === 'Just') {
+				if (_v1.a.$ === 'Fixed') {
+					var _v2 = _v1.a;
+					return '#';
+				} else {
+					var _v3 = _v1.a;
+					return 'O';
+				}
+			} else {
+				return '.';
+			}
+		});
+	return A2(
+		$elm$core$String$join,
+		'\n',
+		A2(
+			$elm$core$List$map,
+			function (y) {
+				return A3(
+					$elm$core$List$foldr,
+					F2(
+						function (x, acc) {
+							return _Utils_ap(
+								A2(getCharacter, x, y),
+								acc);
+						}),
+					'',
+					A2($elm$core$List$range, 0, xBoundary));
+			},
+			A2($elm$core$List$range, 0, yBoundary)));
+};
+var $Evelios$elm_hash$Hash$expTolerance = 6;
+var $Evelios$elm_hash$Hash$Hash = function (a) {
+	return {$: 'Hash', a: a};
+};
+var $chain_partners$elm_bignum$Integer$Integer = F2(
+	function (a, b) {
+		return {$: 'Integer', a: a, b: b};
+	});
+var $chain_partners$elm_bignum$Integer$Negative = {$: 'Negative'};
+var $chain_partners$elm_bignum$Integer$Positive = {$: 'Positive'};
+var $chain_partners$elm_bignum$Integer$Zero = {$: 'Zero'};
+var $chain_partners$elm_bignum$Integer$defaultBase = A2($elm$core$Basics$pow, 10, 7);
+var $chain_partners$elm_bignum$Integer$magnitudeFromInt_ = F2(
+	function (acc, i) {
+		magnitudeFromInt_:
+		while (true) {
+			var q = (i / $chain_partners$elm_bignum$Integer$defaultBase) | 0;
+			if (!q) {
+				return $elm$core$List$reverse(
+					A2($elm$core$List$cons, i, acc));
+			} else {
+				var $temp$acc = A2($elm$core$List$cons, i % $chain_partners$elm_bignum$Integer$defaultBase, acc),
+					$temp$i = q;
+				acc = $temp$acc;
+				i = $temp$i;
+				continue magnitudeFromInt_;
+			}
+		}
+	});
+var $chain_partners$elm_bignum$Integer$magnitudeFromInt = $chain_partners$elm_bignum$Integer$magnitudeFromInt_(_List_Nil);
+var $chain_partners$elm_bignum$Integer$fromInt = function (i) {
+	var _v0 = A2($elm$core$Basics$compare, i, 0);
+	switch (_v0.$) {
+		case 'GT':
+			return A2(
+				$chain_partners$elm_bignum$Integer$Integer,
+				$chain_partners$elm_bignum$Integer$Positive,
+				$chain_partners$elm_bignum$Integer$magnitudeFromInt(i));
+		case 'EQ':
+			return $chain_partners$elm_bignum$Integer$Zero;
+		default:
+			return A2(
+				$chain_partners$elm_bignum$Integer$Integer,
+				$chain_partners$elm_bignum$Integer$Negative,
+				$chain_partners$elm_bignum$Integer$magnitudeFromInt(
+					$elm$core$Basics$abs(i)));
+	}
+};
+var $Evelios$elm_hash$Hash$fromInt = A2($elm$core$Basics$composeR, $chain_partners$elm_bignum$Integer$fromInt, $Evelios$elm_hash$Hash$Hash);
+var $bonzaico$murmur3$Murmur3$HashData = F4(
+	function (shift, seed, hash, charsProcessed) {
+		return {charsProcessed: charsProcessed, hash: hash, seed: seed, shift: shift};
+	});
+var $bonzaico$murmur3$Murmur3$c1 = 3432918353;
+var $bonzaico$murmur3$Murmur3$c2 = 461845907;
+var $bonzaico$murmur3$Murmur3$multiplyBy = F2(
+	function (b, a) {
+		return ((a & 65535) * b) + ((((a >>> 16) * b) & 65535) << 16);
+	});
+var $elm$core$Bitwise$or = _Bitwise_or;
+var $bonzaico$murmur3$Murmur3$rotlBy = F2(
+	function (b, a) {
+		return (a << b) | (a >>> (32 - b));
+	});
+var $elm$core$Bitwise$xor = _Bitwise_xor;
+var $bonzaico$murmur3$Murmur3$finalize = function (data) {
+	var acc = (!(!data.hash)) ? (data.seed ^ A2(
+		$bonzaico$murmur3$Murmur3$multiplyBy,
+		$bonzaico$murmur3$Murmur3$c2,
+		A2(
+			$bonzaico$murmur3$Murmur3$rotlBy,
+			15,
+			A2($bonzaico$murmur3$Murmur3$multiplyBy, $bonzaico$murmur3$Murmur3$c1, data.hash)))) : data.seed;
+	var h0 = acc ^ data.charsProcessed;
+	var h1 = A2($bonzaico$murmur3$Murmur3$multiplyBy, 2246822507, h0 ^ (h0 >>> 16));
+	var h2 = A2($bonzaico$murmur3$Murmur3$multiplyBy, 3266489909, h1 ^ (h1 >>> 13));
+	return (h2 ^ (h2 >>> 16)) >>> 0;
+};
+var $bonzaico$murmur3$Murmur3$mix = F2(
+	function (h1, k1) {
+		return A2(
+			$bonzaico$murmur3$Murmur3$multiplyBy,
+			5,
+			A2(
+				$bonzaico$murmur3$Murmur3$rotlBy,
+				13,
+				h1 ^ A2(
+					$bonzaico$murmur3$Murmur3$multiplyBy,
+					$bonzaico$murmur3$Murmur3$c2,
+					A2(
+						$bonzaico$murmur3$Murmur3$rotlBy,
+						15,
+						A2($bonzaico$murmur3$Murmur3$multiplyBy, $bonzaico$murmur3$Murmur3$c1, k1))))) + 3864292196;
+	});
+var $bonzaico$murmur3$Murmur3$hashFold = F2(
+	function (c, data) {
+		var res = data.hash | ((255 & $elm$core$Char$toCode(c)) << data.shift);
+		var _v0 = data.shift;
+		if (_v0 === 24) {
+			return {
+				charsProcessed: data.charsProcessed + 1,
+				hash: 0,
+				seed: A2($bonzaico$murmur3$Murmur3$mix, data.seed, res),
+				shift: 0
+			};
+		} else {
+			return {charsProcessed: data.charsProcessed + 1, hash: res, seed: data.seed, shift: data.shift + 8};
+		}
+	});
+var $bonzaico$murmur3$Murmur3$hashString = F2(
+	function (seed, str) {
+		return $bonzaico$murmur3$Murmur3$finalize(
+			A3(
+				$elm$core$String$foldl,
+				$bonzaico$murmur3$Murmur3$hashFold,
+				A4($bonzaico$murmur3$Murmur3$HashData, 0, seed, 0, 0),
+				str));
+	});
+var $Evelios$elm_hash$Hash$fromString = A2(
+	$elm$core$Basics$composeR,
+	$bonzaico$murmur3$Murmur3$hashString($Evelios$elm_hash$Hash$expTolerance),
+	$Evelios$elm_hash$Hash$fromInt);
+var $elm_community$list_extra$List$Extra$getAt = F2(
+	function (idx, xs) {
+		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
+			A2($elm$core$List$drop, idx, xs));
+	});
+var $author$project$Days$Day14$insertFixedX = F2(
+	function (_v0, fixedPositions) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return A3($elm$core$Dict$insert, y, x, fixedPositions);
+	});
+var $author$project$Days$Day14$readFixedX = F4(
+	function (boundary, increment, _v0, fixedPositions) {
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			A3(
+				$elm_community$maybe_extra$Maybe$Extra$unwrap,
+				boundary,
+				$elm$core$Basics$add(increment),
+				A2($elm$core$Dict$get, y, fixedPositions)),
+			y);
+	});
+var $author$project$Days$Day14$tiltEast = function (map) {
+	return A4(
+		$author$project$Days$Day14$tilt,
+		A2($author$project$Days$Day14$readFixedX, map.xBoundary, -1),
+		$author$project$Days$Day14$insertFixedX,
+		$elm$core$Dict$foldr,
+		map);
+};
+var $author$project$Days$Day14$tiltSouth = function (map) {
+	return A4(
+		$author$project$Days$Day14$tilt,
+		A2($author$project$Days$Day14$readFixedY, map.yBoundary, -1),
+		$author$project$Days$Day14$insertFixedY,
+		$elm$core$Dict$foldr,
+		map);
+};
+var $author$project$Days$Day14$tiltWest = A3(
+	$author$project$Days$Day14$tilt,
+	A2($author$project$Days$Day14$readFixedX, 0, 1),
+	$author$project$Days$Day14$insertFixedX,
+	$elm$core$Dict$foldl);
+var $author$project$Days$Day14$second = function () {
+	var findPotentialLoop = F3(
+		function (i, hashToLookFor, remainingHashes) {
+			findPotentialLoop:
+			while (true) {
+				if (remainingHashes.b) {
+					var _v1 = remainingHashes.a;
+					var hash = _v1.a;
+					var rest = remainingHashes.b;
+					if (_Utils_eq(hash, hashToLookFor)) {
+						return $elm$core$Maybe$Just(i);
+					} else {
+						var $temp$i = i - 1,
+							$temp$hashToLookFor = hashToLookFor,
+							$temp$remainingHashes = rest;
+						i = $temp$i;
+						hashToLookFor = $temp$hashToLookFor;
+						remainingHashes = $temp$remainingHashes;
+						continue findPotentialLoop;
+					}
+				} else {
+					return $elm$core$Maybe$Nothing;
+				}
+			}
+		});
+	var cycle = A2(
+		$elm$core$Basics$composeR,
+		$author$project$Days$Day14$tiltNorth,
+		A2(
+			$elm$core$Basics$composeR,
+			$author$project$Days$Day14$tiltWest,
+			A2($elm$core$Basics$composeR, $author$project$Days$Day14$tiltSouth, $author$project$Days$Day14$tiltEast)));
+	var calculateHash = A2($elm$core$Basics$composeR, $author$project$Days$Day14$draw, $Evelios$elm_hash$Hash$fromString);
+	var amountOfCyclesExtrapolate = 1000000000;
+	var loop = F3(
+		function (i, calculatedHashes, map) {
+			loop:
+			while (true) {
+				var newCalculatedHash = calculateHash(map);
+				var _v2 = A3(findPotentialLoop, i - 1, newCalculatedHash, calculatedHashes);
+				if (_v2.$ === 'Just') {
+					var loopStartIndex = _v2.a;
+					var loopLength = i - loopStartIndex;
+					var extrapolatedIndexInLoop = A2($elm$core$Basics$modBy, loopLength, amountOfCyclesExtrapolate - loopStartIndex);
+					return $elm$core$Result$Ok(
+						$elm$core$String$fromInt(
+							A3(
+								$elm_community$maybe_extra$Maybe$Extra$unwrap,
+								0,
+								$elm$core$Tuple$second,
+								A2($elm_community$list_extra$List$Extra$getAt, (loopLength - extrapolatedIndexInLoop) - 1, calculatedHashes))));
+				} else {
+					var $temp$i = i + 1,
+						$temp$calculatedHashes = A2(
+						$elm$core$List$cons,
+						_Utils_Tuple2(
+							newCalculatedHash,
+							$author$project$Days$Day14$calculateLoad(map)),
+						calculatedHashes),
+						$temp$map = cycle(map);
+					i = $temp$i;
+					calculatedHashes = $temp$calculatedHashes;
+					map = $temp$map;
+					continue loop;
+				}
+			}
+		});
+	return A2(
+		$elm$core$Basics$composeR,
+		$author$project$Days$Day14$makeMap,
+		A2(loop, 0, _List_Nil));
+}();
 var $author$project$Days$Day2$getPower = function (colors) {
 	return (colors.red * colors.green) * colors.blue;
 };
@@ -15109,7 +15527,9 @@ var $author$project$Main$puzzles = _List_fromArray(
 		{identifier: 'day11-2', label: 'Day 11 (Part Two)', solution: $author$project$Days$Day11$second},
 		{identifier: 'day12-1', label: 'Day 12', solution: $author$project$Days$Day12$first},
 		{identifier: 'day13-1', label: 'Day 13', solution: $author$project$Days$Day13$first},
-		{identifier: 'day13-2', label: 'Day 13 (Part Two)', solution: $author$project$Days$Day13$second}
+		{identifier: 'day13-2', label: 'Day 13 (Part Two)', solution: $author$project$Days$Day13$second},
+		{identifier: 'day14-1', label: 'Day 14', solution: $author$project$Days$Day14$first},
+		{identifier: 'day14-2', label: 'Day 14 (Part Two)', solution: $author$project$Days$Day14$second}
 	]);
 var $author$project$Main$init = _Utils_Tuple2(
 	A3(
@@ -15217,6 +15637,7 @@ var $author$project$Utils$Html$Events$onChange = function (tagger) {
 		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue));
 };
 var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$html$Html$pre = _VirtualDom_node('pre');
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -15309,8 +15730,14 @@ var $author$project$Main$view = function (model) {
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text(
-					A3($elm_community$result_extra$Result$Extra$unpack, $elm$core$Basics$identity, $elm$core$Basics$identity, result))
+					A2(
+					$elm$html$Html$pre,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							A3($elm_community$result_extra$Result$Extra$unpack, $elm$core$Basics$identity, $elm$core$Basics$identity, result))
+						]))
 				]));
 	};
 	var inputField = A2(

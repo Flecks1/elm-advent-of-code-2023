@@ -6,6 +6,7 @@ import Days.Day10
 import Days.Day11
 import Days.Day12
 import Days.Day13
+import Days.Day14
 import Days.Day2
 import Days.Day3
 import Days.Day4
@@ -56,6 +57,8 @@ puzzles =
     , { identifier = "day12-1", label = "Day 12", solution = Days.Day12.first }
     , { identifier = "day13-1", label = "Day 13", solution = Days.Day13.first }
     , { identifier = "day13-2", label = "Day 13 (Part Two)", solution = Days.Day13.second }
+    , { identifier = "day14-1", label = "Day 14", solution = Days.Day14.first }
+    , { identifier = "day14-2", label = "Day 14 (Part Two)", solution = Days.Day14.second }
     ]
 
 
@@ -142,7 +145,7 @@ view model =
 
         outputDisplay result =
             Html.div [ Attrs.class "alert", Attrs.classList [ ( "alert-danger", Result.isErr result ), ( "alert-success", Result.isOk result ) ] ]
-                [ result |> Result.unpack identity identity |> Html.text ]
+                [ Html.pre [] [ result |> Result.unpack identity identity |> Html.text ] ]
     in
     Html.div [ Attrs.class "container mt-5" ]
         [ puzzleSelector
