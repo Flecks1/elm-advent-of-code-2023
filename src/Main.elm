@@ -7,6 +7,7 @@ import Days.Day11
 import Days.Day12
 import Days.Day13
 import Days.Day14
+import Days.Day15
 import Days.Day2
 import Days.Day3
 import Days.Day4
@@ -59,6 +60,8 @@ puzzles =
     , { identifier = "day13-2", label = "Day 13 (Part Two)", solution = Days.Day13.second }
     , { identifier = "day14-1", label = "Day 14", solution = Days.Day14.first }
     , { identifier = "day14-2", label = "Day 14 (Part Two)", solution = Days.Day14.second }
+    , { identifier = "day15-1", label = "Day 15", solution = Days.Day15.first }
+    , { identifier = "day15-2", label = "Day 15 (Part Two)", solution = Days.Day15.second }
     ]
 
 

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "build": "elm make src/Main.elm --debug --output=dist/advent.js",
+    "build": "elm make src/Main.elm --debug --output=dist/advent.js && elm make src/Days/Day16.elm --debug --output=dist/day-16.js",
     "server": "http-server ."
   },
   "repository": {
