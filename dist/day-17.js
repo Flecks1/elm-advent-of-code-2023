@@ -10732,25 +10732,21 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Days$Day16$WaitingForInput = {$: 'WaitingForInput'};
-var $author$project$Days$Day16$init = _Utils_Tuple2($author$project$Days$Day16$WaitingForInput, $elm$core$Platform$Cmd$none);
+var $author$project$Days$Day17$WaitingForInput = function (a) {
+	return {$: 'WaitingForInput', a: a};
+};
+var $author$project$Days$Day17$init = _Utils_Tuple2(
+	$author$project$Days$Day17$WaitingForInput(
+		{error: $elm$core$Maybe$Nothing}),
+	$elm$core$Platform$Cmd$none);
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Days$Day16$GotInput = function (a) {
+var $author$project$Days$Day17$GotInput = function (a) {
 	return {$: 'GotInput', a: a};
 };
-var $author$project$Days$Day16$NewInputParsed = function (a) {
+var $author$project$Days$Day17$NewInputParsed = function (a) {
 	return {$: 'NewInputParsed', a: a};
 };
-var $author$project$Days$Day16$BeamDirections = F4(
-	function (up, right, down, left) {
-		return {down: down, left: left, right: right, up: up};
-	});
-var $author$project$Days$Day16$Empty = {$: 'Empty'};
-var $author$project$Days$Day16$MirrorLeft = {$: 'MirrorLeft'};
-var $author$project$Days$Day16$MirrorRight = {$: 'MirrorRight'};
-var $author$project$Days$Day16$SplitterHorizontal = {$: 'SplitterHorizontal'};
-var $author$project$Days$Day16$SplitterVertical = {$: 'SplitterVertical'};
 var $elm_community$list_extra$List$Extra$indexedFoldl = F3(
 	function (func, acc, list) {
 		var step = F2(
@@ -10771,30 +10767,15 @@ var $elm$core$String$foldr = _String_foldr;
 var $elm$core$String$toList = function (string) {
 	return A3($elm$core$String$foldr, $elm$core$List$cons, _List_Nil, string);
 };
-var $author$project$Days$Day16$fromInput = function () {
-	var toContent = function (symbol) {
-		switch (symbol.valueOf()) {
-			case '\\':
-				return $author$project$Days$Day16$MirrorLeft;
-			case '/':
-				return $author$project$Days$Day16$MirrorRight;
-			case '-':
-				return $author$project$Days$Day16$SplitterHorizontal;
-			case '|':
-				return $author$project$Days$Day16$SplitterVertical;
-			default:
-				return $author$project$Days$Day16$Empty;
-		}
-	};
+var $author$project$Days$Day17$fromInput = function () {
+	var zeroCharCode = $elm$core$Char$toCode(
+		_Utils_chr('0'));
 	var handleSymbol = F3(
-		function (x, y, symbol) {
+		function (x, y, digit) {
 			return A2(
 				$elm$core$Dict$insert,
 				_Utils_Tuple2(x, y),
-				{
-					beams: A4($author$project$Days$Day16$BeamDirections, false, false, false, false),
-					content: toContent(symbol)
-				});
+				$elm$core$Char$toCode(digit) - zeroCharCode);
 		});
 	var handleRow = F3(
 		function (y, row, state) {
@@ -10812,29 +10793,48 @@ var $author$project$Days$Day16$fromInput = function () {
 		$elm$core$String$split('\u000D\n'),
 		A2($elm_community$list_extra$List$Extra$indexedFoldl, handleRow, $elm$core$Dict$empty));
 }();
-var $author$project$Days$Day16$getBoundaries = A2(
+var $author$project$Days$Day17$getBottomRightCell = A2(
 	$elm$core$Dict$foldl,
 	F3(
 		function (_v0, _v1, _v2) {
 			var x = _v0.a;
 			var y = _v0.b;
-			var xBoundary = _v2.a;
-			var yBoundary = _v2.b;
+			var furthestX = _v2.a;
+			var furthestY = _v2.b;
 			return _Utils_Tuple2(
-				A2($elm$core$Basics$max, x, xBoundary),
-				A2($elm$core$Basics$max, y, yBoundary));
+				A2($elm$core$Basics$max, x, furthestX),
+				A2($elm$core$Basics$max, y, furthestY));
 		}),
 	_Utils_Tuple2(0, 0));
-var $author$project$Days$Day16$Beam = F2(
-	function (position, direction) {
-		return {direction: direction, position: position};
+var $author$project$Days$Day17$NodeState = F2(
+	function (currentHeatLoss, node) {
+		return {currentHeatLoss: currentHeatLoss, node: node};
 	});
-var $author$project$Days$Day16$ResolvingPartOne = function (a) {
+var $author$project$Days$Day17$ResolvingPartOne = function (a) {
 	return {$: 'ResolvingPartOne', a: a};
 };
-var $author$project$Days$Day16$RunPartOne = {$: 'RunPartOne'};
+var $author$project$Days$Day17$RunPartOne = {$: 'RunPartOne'};
+var $TSFoster$elm_heap$Heap$Options = function (a) {
+	return {$: 'Options', a: a};
+};
+var $TSFoster$elm_heap$Heap$makeCompare = F3(
+	function (fn, a, b) {
+		return A2(
+			$elm$core$Basics$compare,
+			fn(a),
+			fn(b));
+	});
+var $TSFoster$elm_heap$Heap$by = F2(
+	function (hash, _v0) {
+		var oldOptions = _v0.a;
+		return $TSFoster$elm_heap$Heap$Options(
+			{
+				compare: $TSFoster$elm_heap$Heap$makeCompare(hash),
+				order: oldOptions.order
+			});
+	});
 var $elm$core$Process$sleep = _Process_sleep;
-var $author$project$Days$Day16$delayMsg = F2(
+var $author$project$Days$Day17$delayMsg = F2(
 	function (milliseconds, msg) {
 		return A2(
 			$elm$core$Task$perform,
@@ -10843,99 +10843,214 @@ var $author$project$Days$Day16$delayMsg = F2(
 			},
 			$elm$core$Process$sleep(milliseconds));
 	});
-var $author$project$Days$Day16$resetMap = $elm$core$Dict$map(
-	F2(
-		function (_v0, cell) {
-			return _Utils_update(
-				cell,
-				{
-					beams: A4($author$project$Days$Day16$BeamDirections, false, false, false, false)
-				});
-		}));
-var $author$project$Days$Day16$initiatePartOne = F2(
-	function (map, boundaries) {
-		return _Utils_Tuple2(
-			$author$project$Days$Day16$ResolvingPartOne(
-				{
-					activeBeams: _List_fromArray(
-						[
-							A2(
-							$author$project$Days$Day16$Beam,
-							_Utils_Tuple2(-1, 0),
-							_Utils_Tuple2(1, 0))
-						]),
-					answer: $elm$core$Maybe$Nothing,
-					boundaries: boundaries,
-					map: $author$project$Days$Day16$resetMap(map)
-				}),
-			A2($author$project$Days$Day16$delayMsg, 50, $author$project$Days$Day16$RunPartOne));
-	});
-var $author$project$Days$Day16$getStartingBeams = function (_v0) {
-	var xBoundary = _v0.a;
-	var yBoundary = _v0.b;
-	var yRange = A2($elm$core$List$range, 0, yBoundary);
-	var xRange = A2($elm$core$List$range, 0, xBoundary);
-	var xStartingBeams = A3(
-		$elm$core$List$foldr,
-		F2(
-			function (x, startingBeams) {
-				return A2(
-					$elm$core$List$cons,
-					A2(
-						$author$project$Days$Day16$Beam,
-						_Utils_Tuple2(x, -1),
-						_Utils_Tuple2(0, 1)),
-					A2(
-						$elm$core$List$cons,
-						A2(
-							$author$project$Days$Day16$Beam,
-							_Utils_Tuple2(x, yBoundary + 1),
-							_Utils_Tuple2(0, -1)),
-						startingBeams));
-			}),
-		_List_Nil,
-		xRange);
-	return A3(
-		$elm$core$List$foldr,
-		F2(
-			function (y, startingBeams) {
-				return A2(
-					$elm$core$List$cons,
-					A2(
-						$author$project$Days$Day16$Beam,
-						_Utils_Tuple2(-1, y),
-						_Utils_Tuple2(1, 0)),
-					A2(
-						$elm$core$List$cons,
-						A2(
-							$author$project$Days$Day16$Beam,
-							_Utils_Tuple2(xBoundary + 1, y),
-							_Utils_Tuple2(-1, 0)),
-						startingBeams));
-			}),
-		xStartingBeams,
-		yRange);
+var $author$project$Days$Day17$directions = {
+	down: _Utils_Tuple2(0, 1),
+	left: _Utils_Tuple2(-1, 0),
+	right: _Utils_Tuple2(1, 0),
+	up: _Utils_Tuple2(0, -1)
 };
-var $author$project$Days$Day16$ResolvingPartTwo = function (a) {
+var $TSFoster$elm_heap$Heap$Heap = function (a) {
+	return {$: 'Heap', a: a};
+};
+var $TSFoster$elm_heap$Heap$Leaf = {$: 'Leaf'};
+var $TSFoster$elm_heap$Heap$reverseCompare = F3(
+	function (fn, a, b) {
+		var _v0 = A2(fn, a, b);
+		switch (_v0.$) {
+			case 'GT':
+				return $elm$core$Basics$LT;
+			case 'LT':
+				return $elm$core$Basics$GT;
+			default:
+				return $elm$core$Basics$EQ;
+		}
+	});
+var $TSFoster$elm_heap$Heap$makeReversible = F2(
+	function (compare, order) {
+		if (order.$ === 'MinFirst') {
+			return compare;
+		} else {
+			return $TSFoster$elm_heap$Heap$reverseCompare(compare);
+		}
+	});
+var $TSFoster$elm_heap$Heap$empty = function (_v0) {
+	var compare = _v0.a.compare;
+	var order = _v0.a.order;
+	return $TSFoster$elm_heap$Heap$Heap(
+		{
+			compare: $TSFoster$elm_heap$Heap$makeReversible(compare),
+			order: order,
+			size: 0,
+			structure: $TSFoster$elm_heap$Heap$Leaf
+		});
+};
+var $TSFoster$elm_heap$Heap$Branch = F2(
+	function (a, b) {
+		return {$: 'Branch', a: a, b: b};
+	});
+var $TSFoster$elm_heap$Heap$mergeInto = F2(
+	function (_v0, _v1) {
+		var heap = _v0.a;
+		var toMerge = _v1.a;
+		return $TSFoster$elm_heap$Heap$Heap(
+			function () {
+				var _v2 = heap.structure;
+				if (_v2.$ === 'Leaf') {
+					return _Utils_update(
+						heap,
+						{size: toMerge.size, structure: toMerge.structure});
+				} else {
+					var elem1 = _v2.a;
+					var subheap1 = _v2.b;
+					var _v3 = toMerge.structure;
+					if (_v3.$ === 'Leaf') {
+						return heap;
+					} else {
+						var elem2 = _v3.a;
+						var subheap2 = _v3.b;
+						return _Utils_eq(
+							A3(heap.compare, heap.order, elem1, elem2),
+							$elm$core$Basics$LT) ? _Utils_update(
+							heap,
+							{
+								size: heap.size + toMerge.size,
+								structure: A2(
+									$TSFoster$elm_heap$Heap$Branch,
+									elem1,
+									A2($elm$core$List$cons, toMerge.structure, subheap1))
+							}) : _Utils_update(
+							heap,
+							{
+								size: heap.size + toMerge.size,
+								structure: A2(
+									$TSFoster$elm_heap$Heap$Branch,
+									elem2,
+									A2($elm$core$List$cons, heap.structure, subheap2))
+							});
+					}
+				}
+			}());
+	});
+var $TSFoster$elm_heap$Heap$push = F2(
+	function (a, _v0) {
+		var heap = _v0.a;
+		return A2(
+			$TSFoster$elm_heap$Heap$mergeInto,
+			$TSFoster$elm_heap$Heap$Heap(heap),
+			$TSFoster$elm_heap$Heap$Heap(
+				_Utils_update(
+					heap,
+					{
+						size: 1,
+						structure: A2($TSFoster$elm_heap$Heap$Branch, a, _List_Nil)
+					})));
+	});
+var $TSFoster$elm_heap$Heap$fromList = A2(
+	$elm$core$Basics$composeL,
+	$elm$core$List$foldl($TSFoster$elm_heap$Heap$push),
+	$TSFoster$elm_heap$Heap$empty);
+var $TSFoster$elm_heap$Heap$MinFirst = {$: 'MinFirst'};
+var $TSFoster$elm_heap$Heap$smallest = $TSFoster$elm_heap$Heap$Options(
+	{compare: $elm$core$Basics$compare, order: $TSFoster$elm_heap$Heap$MinFirst});
+var $author$project$Days$Day17$initiatePartOne = F2(
+	function (map, destination) {
+		return _Utils_Tuple2(
+			$author$project$Days$Day17$ResolvingPartOne(
+				{
+					answer: $elm$core$Maybe$Nothing,
+					cheapestPath: _List_Nil,
+					destination: destination,
+					finalCheapestPathCost: $elm$core$Maybe$Nothing,
+					map: map,
+					previousNode: $elm$core$Dict$empty,
+					toWalk: A2(
+						$TSFoster$elm_heap$Heap$fromList,
+						A2(
+							$TSFoster$elm_heap$Heap$by,
+							function ($) {
+								return $.currentHeatLoss;
+							},
+							$TSFoster$elm_heap$Heap$smallest),
+						_List_fromArray(
+							[
+								A2(
+								$author$project$Days$Day17$NodeState,
+								0,
+								_Utils_Tuple3(
+									_Utils_Tuple2(0, 0),
+									$author$project$Days$Day17$directions.right,
+									0)),
+								A2(
+								$author$project$Days$Day17$NodeState,
+								0,
+								_Utils_Tuple3(
+									_Utils_Tuple2(0, 0),
+									$author$project$Days$Day17$directions.down,
+									0))
+							]))
+				}),
+			A2($author$project$Days$Day17$delayMsg, 50, $author$project$Days$Day17$RunPartOne));
+	});
+var $author$project$Days$Day17$ResolvingPartTwo = function (a) {
 	return {$: 'ResolvingPartTwo', a: a};
 };
-var $author$project$Days$Day16$RunPartTwo = {$: 'RunPartTwo'};
-var $author$project$Days$Day16$alreadyHasBeamsComingFromAnyDirection = function (_v0) {
-	var up = _v0.up;
-	var right = _v0.right;
-	var down = _v0.down;
-	var left = _v0.left;
-	return up || (right || (down || left));
+var $author$project$Days$Day17$RunPartTwo = {$: 'RunPartTwo'};
+var $author$project$Days$Day17$initiatePartTwo = F2(
+	function (map, destination) {
+		return _Utils_Tuple2(
+			$author$project$Days$Day17$ResolvingPartTwo(
+				{
+					answer: $elm$core$Maybe$Nothing,
+					cheapestPath: _List_Nil,
+					destination: destination,
+					finalCheapestPathCost: $elm$core$Maybe$Nothing,
+					map: map,
+					previousNode: $elm$core$Dict$empty,
+					toWalk: A2(
+						$TSFoster$elm_heap$Heap$fromList,
+						A2(
+							$TSFoster$elm_heap$Heap$by,
+							function ($) {
+								return $.currentHeatLoss;
+							},
+							$TSFoster$elm_heap$Heap$smallest),
+						_List_fromArray(
+							[
+								A2(
+								$author$project$Days$Day17$NodeState,
+								0,
+								_Utils_Tuple3(
+									_Utils_Tuple2(0, 0),
+									$author$project$Days$Day17$directions.right,
+									0)),
+								A2(
+								$author$project$Days$Day17$NodeState,
+								0,
+								_Utils_Tuple3(
+									_Utils_Tuple2(0, 0),
+									$author$project$Days$Day17$directions.down,
+									0))
+							]))
+				}),
+			A2($author$project$Days$Day17$delayMsg, 50, $author$project$Days$Day17$RunPartTwo));
+	});
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
 };
-var $author$project$Days$Day16$getAmountOfCellsTouchedByBeam = function () {
-	var increment = F3(
-		function (_v0, _v1, acc) {
-			var beams = _v1.beams;
-			return $author$project$Days$Day16$alreadyHasBeamsComingFromAnyDirection(beams) ? (acc + 1) : acc;
-		});
-	return A2($elm$core$Dict$foldl, increment, 0);
-}();
-var $author$project$Days$Day16$add = F2(
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$file$File$toString = _File_toString;
+var $TSFoster$elm_heap$Heap$isEmpty = function (_v0) {
+	var a = _v0.a;
+	return !a.size;
+};
+var $elm_community$maybe_extra$Maybe$Extra$isNothing = function (m) {
+	if (m.$ === 'Nothing') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $author$project$Days$Day17$addDirection = F2(
 	function (_v0, _v1) {
 		var deltaX = _v0.a;
 		var deltaY = _v0.b;
@@ -10943,271 +11058,324 @@ var $author$project$Days$Day16$add = F2(
 		var y = _v1.b;
 		return _Utils_Tuple2(x + deltaX, y + deltaY);
 	});
-var $author$project$Days$Day16$alreadyHasBeamComingFromDirection = F2(
-	function (direction, _v0) {
-		var up = _v0.up;
-		var right = _v0.right;
-		var down = _v0.down;
-		var left = _v0.left;
-		return _Utils_eq(
-			direction,
-			_Utils_Tuple2(1, 0)) ? left : (_Utils_eq(
-			direction,
-			_Utils_Tuple2(-1, 0)) ? right : (_Utils_eq(
-			direction,
-			_Utils_Tuple2(0, 1)) ? up : down));
+var $author$project$Days$Day17$multiplyDirection = F2(
+	function (n, _v0) {
+		var deltaX = _v0.a;
+		var deltaY = _v0.b;
+		return _Utils_Tuple2(n * deltaX, n * deltaY);
 	});
-var $author$project$Days$Day16$deviateBeam = F2(
-	function (direction, cell) {
-		var deltaX = direction.a;
-		var deltaY = direction.b;
-		var content = cell.content;
-		var beams = cell.beams;
-		var newDirections = function () {
-			switch (content.$) {
-				case 'MirrorLeft':
-					return _List_fromArray(
-						[
-							_Utils_Tuple2(deltaY, deltaX)
-						]);
-				case 'MirrorRight':
-					return _List_fromArray(
-						[
-							_Utils_Tuple2(-deltaY, -deltaX)
-						]);
-				case 'SplitterHorizontal':
-					return (_Utils_eq(
-						direction,
-						_Utils_Tuple2(0, -1)) || _Utils_eq(
-						direction,
-						_Utils_Tuple2(0, 1))) ? ((!$author$project$Days$Day16$alreadyHasBeamsComingFromAnyDirection(beams)) ? _List_fromArray(
-						[
-							_Utils_Tuple2(-1, 0),
-							_Utils_Tuple2(1, 0)
-						]) : _List_Nil) : _List_fromArray(
-						[
-							_Utils_Tuple2(deltaX, deltaY)
-						]);
-				case 'SplitterVertical':
-					return (_Utils_eq(
-						direction,
-						_Utils_Tuple2(-1, 0)) || _Utils_eq(
-						direction,
-						_Utils_Tuple2(1, 0))) ? ((!$author$project$Days$Day16$alreadyHasBeamsComingFromAnyDirection(beams)) ? _List_fromArray(
-						[
-							_Utils_Tuple2(0, -1),
-							_Utils_Tuple2(0, 1)
-						]) : _List_Nil) : _List_fromArray(
-						[
-							_Utils_Tuple2(deltaX, deltaY)
-						]);
-				default:
-					return _List_fromArray(
-						[
-							_Utils_Tuple2(deltaX, deltaY)
-						]);
-			}
-		}();
-		var newBeams = function () {
-			switch (content.$) {
-				case 'MirrorLeft':
-					return (_Utils_eq(
-						direction,
-						_Utils_Tuple2(1, 0)) || _Utils_eq(
-						direction,
-						_Utils_Tuple2(0, -1))) ? _Utils_update(
-						beams,
-						{down: true, left: true}) : _Utils_update(
-						beams,
-						{right: true, up: true});
-				case 'MirrorRight':
-					return (_Utils_eq(
-						direction,
-						_Utils_Tuple2(1, 0)) || _Utils_eq(
-						direction,
-						_Utils_Tuple2(0, 1))) ? _Utils_update(
-						beams,
-						{left: true, up: true}) : _Utils_update(
-						beams,
-						{down: true, right: true});
-				case 'SplitterHorizontal':
-					return _Utils_eq(
-						direction,
-						_Utils_Tuple2(0, -1)) ? _Utils_update(
-						beams,
-						{down: true, left: true, right: true}) : (_Utils_eq(
-						direction,
-						_Utils_Tuple2(0, 1)) ? _Utils_update(
-						beams,
-						{left: true, right: true, up: true}) : _Utils_update(
-						beams,
-						{left: true, right: true}));
-				case 'SplitterVertical':
-					return _Utils_eq(
-						direction,
-						_Utils_Tuple2(-1, 0)) ? _Utils_update(
-						beams,
-						{down: true, right: true, up: true}) : (_Utils_eq(
-						direction,
-						_Utils_Tuple2(1, 0)) ? _Utils_update(
-						beams,
-						{down: true, left: true, up: true}) : _Utils_update(
-						beams,
-						{down: true, up: true}));
-				default:
-					return (_Utils_eq(
-						direction,
-						_Utils_Tuple2(-1, 0)) || _Utils_eq(
-						direction,
-						_Utils_Tuple2(1, 0))) ? _Utils_update(
-						beams,
-						{left: true, right: true}) : _Utils_update(
-						beams,
-						{down: true, up: true});
-			}
-		}();
-		return _Utils_Tuple2(
-			_Utils_update(
-				cell,
-				{beams: newBeams}),
-			newDirections);
+var $elm_community$maybe_extra$Maybe$Extra$unwrap = F3(
+	function (_default, f, m) {
+		if (m.$ === 'Nothing') {
+			return _default;
+		} else {
+			var a = m.a;
+			return f(a);
+		}
 	});
-var $author$project$Days$Day16$getCell = $elm$core$Dict$get;
-var $elm$core$Tuple$mapSecond = F2(
-	function (func, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return _Utils_Tuple2(
-			x,
-			func(y));
+var $author$project$Days$Day17$getNeighbors = F4(
+	function (minSteps, maxSteps, map, _v0) {
+		var currentHeatLoss = _v0.currentHeatLoss;
+		var node = _v0.node;
+		var _v1 = node;
+		var currentPosition = _v1.a;
+		var currentDirection = _v1.b;
+		var perpendicularDirections = (_Utils_eq(currentDirection, $author$project$Days$Day17$directions.left) || _Utils_eq(currentDirection, $author$project$Days$Day17$directions.right)) ? _List_fromArray(
+			[$author$project$Days$Day17$directions.up, $author$project$Days$Day17$directions.down]) : _List_fromArray(
+			[$author$project$Days$Day17$directions.right, $author$project$Days$Day17$directions.left]);
+		var makeNeighbor = function (direction) {
+			var prestepsHeatloss = (minSteps > 1) ? A3(
+				$elm$core$List$foldl,
+				function (steps) {
+					return $elm$core$Basics$add(
+						A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Dict$get,
+								A2(
+									$author$project$Days$Day17$addDirection,
+									A2($author$project$Days$Day17$multiplyDirection, steps, direction),
+									currentPosition),
+								map)));
+				},
+				0,
+				A2($elm$core$List$range, 1, minSteps - 1)) : 0;
+			return A3(
+				$elm$core$List$foldl,
+				F2(
+					function (steps, _v2) {
+						var neighbors = _v2.a;
+						var previousNeighborsHeatloss = _v2.b;
+						var newPosition = A2(
+							$author$project$Days$Day17$addDirection,
+							A2($author$project$Days$Day17$multiplyDirection, steps, direction),
+							currentPosition);
+						return A3(
+							$elm_community$maybe_extra$Maybe$Extra$unwrap,
+							_Utils_Tuple2(neighbors, previousNeighborsHeatloss),
+							function (heatloss) {
+								return _Utils_Tuple2(
+									A2(
+										$elm$core$List$cons,
+										A2(
+											$author$project$Days$Day17$NodeState,
+											previousNeighborsHeatloss + heatloss,
+											_Utils_Tuple3(newPosition, direction, steps)),
+										neighbors),
+									previousNeighborsHeatloss + heatloss);
+							},
+							A2($elm$core$Dict$get, newPosition, map));
+					}),
+				_Utils_Tuple2(_List_Nil, currentHeatLoss + prestepsHeatloss),
+				A2($elm$core$List$range, minSteps, maxSteps)).a;
+		};
+		return A2($elm$core$List$concatMap, makeNeighbor, perpendicularDirections);
 	});
-var $author$project$Days$Day16$setCell = F2(
-	function (position, cell) {
-		return A2($elm$core$Dict$insert, position, cell);
+var $elm$core$Debug$log = _Debug_log;
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
 	});
-var $author$project$Days$Day16$updateBeams = function (initialState) {
-	var activeBeams = initialState.activeBeams;
-	var beamsProgress = F2(
-		function (_v2, state) {
-			var position = _v2.position;
-			var direction = _v2.direction;
-			var newPosition = A2($author$project$Days$Day16$add, direction, position);
-			var _v0 = A2($author$project$Days$Day16$getCell, newPosition, state.map);
-			if (_v0.$ === 'Just') {
-				var cell = _v0.a;
-				var beams = cell.beams;
-				if (!A2($author$project$Days$Day16$alreadyHasBeamComingFromDirection, direction, beams)) {
-					var _v1 = A2(
-						$elm$core$Tuple$mapSecond,
-						$elm$core$List$map(
-							$author$project$Days$Day16$Beam(newPosition)),
-						A2($author$project$Days$Day16$deviateBeam, direction, cell));
-					var newCell = _v1.a;
-					var newBeams = _v1.b;
-					return _Utils_update(
-						state,
-						{
-							activeBeams: _Utils_ap(newBeams, state.activeBeams),
-							map: A3($author$project$Days$Day16$setCell, newPosition, newCell, state.map)
-						});
-				} else {
-					return state;
-				}
+var $TSFoster$elm_heap$Heap$mergePairs = F2(
+	function (heap, nodes) {
+		var _v0 = A2(
+			$elm$core$List$filter,
+			$elm$core$Basics$neq($TSFoster$elm_heap$Heap$Leaf),
+			nodes);
+		if (!_v0.b) {
+			return $TSFoster$elm_heap$Heap$Leaf;
+		} else {
+			if (!_v0.b.b) {
+				var node = _v0.a;
+				return node;
 			} else {
-				return state;
-			}
-		});
-	return A3(
-		$elm$core$List$foldl,
-		beamsProgress,
-		_Utils_update(
-			initialState,
-			{activeBeams: _List_Nil}),
-		activeBeams);
-};
-var $author$project$Days$Day16$updatePartTwo = function (partTwoModel) {
-	var calculateResultForStartingBeamAndLoop = function (currentState) {
-		calculateResultForStartingBeamAndLoop:
-		while (true) {
-			if (!$elm$core$List$isEmpty(currentState.activeBeams)) {
-				var $temp$currentState = $author$project$Days$Day16$updateBeams(currentState);
-				currentState = $temp$currentState;
-				continue calculateResultForStartingBeamAndLoop;
-			} else {
-				return _Utils_Tuple2(
-					$author$project$Days$Day16$ResolvingPartTwo(
+				var node1 = _v0.a;
+				var _v1 = _v0.b;
+				var node2 = _v1.a;
+				var rest = _v1.b;
+				var _v2 = A2(
+					$TSFoster$elm_heap$Heap$mergeInto,
+					A2(
+						$TSFoster$elm_heap$Heap$mergeInto,
+						$TSFoster$elm_heap$Heap$Heap(
+							_Utils_update(
+								heap,
+								{structure: node1})),
+						$TSFoster$elm_heap$Heap$Heap(
+							_Utils_update(
+								heap,
+								{structure: node2}))),
+					$TSFoster$elm_heap$Heap$Heap(
 						_Utils_update(
-							currentState,
+							heap,
 							{
-								maximum: A2(
-									$elm$core$Basics$max,
-									currentState.maximum,
-									$author$project$Days$Day16$getAmountOfCellsTouchedByBeam(currentState.map))
-							})),
-					A2($author$project$Days$Day16$delayMsg, 100, $author$project$Days$Day16$RunPartTwo));
+								structure: A2($TSFoster$elm_heap$Heap$mergePairs, heap, rest)
+							})));
+				var structure = _v2.a.structure;
+				return structure;
 			}
 		}
-	};
-	var _v0 = partTwoModel.startingBeams;
-	if (_v0.b) {
-		var startingBeam = _v0.a;
-		var rest = _v0.b;
-		return calculateResultForStartingBeamAndLoop(
-			_Utils_update(
-				partTwoModel,
-				{
-					activeBeams: _List_fromArray(
-						[startingBeam]),
-					map: $author$project$Days$Day16$resetMap(partTwoModel.map),
-					startingBeams: rest
-				}));
+	});
+var $TSFoster$elm_heap$Heap$pop = function (_v0) {
+	var heap = _v0.a;
+	var _v1 = heap.structure;
+	if (_v1.$ === 'Leaf') {
+		return $elm$core$Maybe$Nothing;
 	} else {
+		var a = _v1.a;
+		var subheap = _v1.b;
+		return $elm$core$Maybe$Just(
+			_Utils_Tuple2(
+				a,
+				$TSFoster$elm_heap$Heap$Heap(
+					_Utils_update(
+						heap,
+						{
+							size: heap.size - 1,
+							structure: A2($TSFoster$elm_heap$Heap$mergePairs, heap, subheap)
+						}))));
+	}
+};
+var $author$project$Days$Day17$pathfindingAlgorithm = F3(
+	function (minSteps, maxSteps, state) {
+		var _v0 = $TSFoster$elm_heap$Heap$pop(state.toWalk);
+		if (_v0.$ === 'Just') {
+			var _v1 = _v0.a;
+			var currentNodeState = _v1.a;
+			var newHeap = _v1.b;
+			var _v2 = currentNodeState.node;
+			var currentPosition = _v2.a;
+			if (!_Utils_eq(currentPosition, state.destination)) {
+				var handleNeighbor = F2(
+					function (neighborNodeState, currentState) {
+						var toWalk = currentState.toWalk;
+						var previousNode = currentState.previousNode;
+						var _v4 = A2($elm$core$Dict$get, neighborNodeState.node, previousNode);
+						if (_v4.$ === 'Nothing') {
+							return _Utils_update(
+								currentState,
+								{
+									previousNode: A3($elm$core$Dict$insert, neighborNodeState.node, _Utils_Tuple0, previousNode),
+									toWalk: A2($TSFoster$elm_heap$Heap$push, neighborNodeState, toWalk)
+								});
+						} else {
+							return currentState;
+						}
+					});
+				var newState = A3(
+					$elm$core$List$foldl,
+					handleNeighbor,
+					_Utils_update(
+						state,
+						{toWalk: newHeap}),
+					A4($author$project$Days$Day17$getNeighbors, minSteps, maxSteps, state.map, currentNodeState));
+				return _Utils_update(
+					newState,
+					{
+						cheapestPath: _List_fromArray(
+							[
+								function (_v3) {
+								var p = _v3.a;
+								return p;
+							}(currentNodeState.node)
+							])
+					});
+			} else {
+				return _Utils_update(
+					state,
+					{
+						cheapestPath: _List_fromArray(
+							[
+								function (_v5) {
+								var p = _v5.a;
+								return p;
+							}(currentNodeState.node)
+							]),
+						finalCheapestPathCost: $elm$core$Maybe$Just(currentNodeState.currentHeatLoss),
+						toWalk: $TSFoster$elm_heap$Heap$empty(
+							A2(
+								$TSFoster$elm_heap$Heap$by,
+								function ($) {
+									return $.currentHeatLoss;
+								},
+								$TSFoster$elm_heap$Heap$smallest))
+					});
+			}
+		} else {
+			return A2($elm$core$Debug$log, 'DESTINATION NEVER REACHED, SHOULD NOT HAPPEN', state);
+		}
+	});
+var $author$project$Days$Day17$updatePartOne = function (partOneModel) {
+	var finalCheapestPathCost = partOneModel.finalCheapestPathCost;
+	var toWalk = partOneModel.toWalk;
+	var recursiveHelper = F2(
+		function (cyclesToRunPerFrame, currentModel) {
+			recursiveHelper:
+			while (true) {
+				if ((cyclesToRunPerFrame > 0) && $elm_community$maybe_extra$Maybe$Extra$isNothing(currentModel.finalCheapestPathCost)) {
+					var $temp$cyclesToRunPerFrame = cyclesToRunPerFrame - 1,
+						$temp$currentModel = A3($author$project$Days$Day17$pathfindingAlgorithm, 1, 3, currentModel);
+					cyclesToRunPerFrame = $temp$cyclesToRunPerFrame;
+					currentModel = $temp$currentModel;
+					continue recursiveHelper;
+				} else {
+					return _Utils_Tuple2(
+						$author$project$Days$Day17$ResolvingPartOne(currentModel),
+						A2($author$project$Days$Day17$delayMsg, 50, $author$project$Days$Day17$RunPartOne));
+				}
+			}
+		});
+	var _v0 = _Utils_Tuple2(
+		finalCheapestPathCost,
+		$TSFoster$elm_heap$Heap$isEmpty(toWalk));
+	if (_v0.a.$ === 'Just') {
+		var cost = _v0.a.a;
 		return _Utils_Tuple2(
-			$author$project$Days$Day16$ResolvingPartTwo(
+			$author$project$Days$Day17$ResolvingPartOne(
+				_Utils_update(
+					partOneModel,
+					{
+						answer: $elm$core$Maybe$Just(
+							$elm$core$String$fromFloat(cost))
+					})),
+			$elm$core$Platform$Cmd$none);
+	} else {
+		if (_v0.b) {
+			var _v1 = _v0.a;
+			return _Utils_Tuple2(
+				$author$project$Days$Day17$ResolvingPartOne(
+					_Utils_update(
+						partOneModel,
+						{
+							answer: $elm$core$Maybe$Just('Oops, couldn\'t reach destination!')
+						})),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			var _v2 = _v0.a;
+			return A2(recursiveHelper, 1000, partOneModel);
+		}
+	}
+};
+var $author$project$Days$Day17$updatePartTwo = function (partTwoModel) {
+	var finalCheapestPathCost = partTwoModel.finalCheapestPathCost;
+	var toWalk = partTwoModel.toWalk;
+	var recursiveHelper = F2(
+		function (cyclesToRunPerFrame, currentModel) {
+			recursiveHelper:
+			while (true) {
+				if ((cyclesToRunPerFrame > 0) && $elm_community$maybe_extra$Maybe$Extra$isNothing(currentModel.finalCheapestPathCost)) {
+					var $temp$cyclesToRunPerFrame = cyclesToRunPerFrame - 1,
+						$temp$currentModel = A3($author$project$Days$Day17$pathfindingAlgorithm, 4, 10, currentModel);
+					cyclesToRunPerFrame = $temp$cyclesToRunPerFrame;
+					currentModel = $temp$currentModel;
+					continue recursiveHelper;
+				} else {
+					return _Utils_Tuple2(
+						$author$project$Days$Day17$ResolvingPartTwo(currentModel),
+						A2($author$project$Days$Day17$delayMsg, 50, $author$project$Days$Day17$RunPartTwo));
+				}
+			}
+		});
+	var _v0 = _Utils_Tuple2(
+		finalCheapestPathCost,
+		$TSFoster$elm_heap$Heap$isEmpty(toWalk));
+	if (_v0.a.$ === 'Just') {
+		var cost = _v0.a.a;
+		return _Utils_Tuple2(
+			$author$project$Days$Day17$ResolvingPartTwo(
 				_Utils_update(
 					partTwoModel,
 					{
 						answer: $elm$core$Maybe$Just(
-							$elm$core$String$fromInt(partTwoModel.maximum))
+							$elm$core$String$fromFloat(cost))
 					})),
 			$elm$core$Platform$Cmd$none);
+	} else {
+		if (_v0.b) {
+			var _v1 = _v0.a;
+			return _Utils_Tuple2(
+				$author$project$Days$Day17$ResolvingPartTwo(
+					_Utils_update(
+						partTwoModel,
+						{
+							answer: $elm$core$Maybe$Just('Oops, couldn\'t reach destination!')
+						})),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			var _v2 = _v0.a;
+			return A2(recursiveHelper, 1000, partTwoModel);
+		}
 	}
 };
-var $author$project$Days$Day16$initiatePartTwo = F2(
-	function (map, boundaries) {
-		return $author$project$Days$Day16$updatePartTwo(
-			{
-				activeBeams: _List_Nil,
-				answer: $elm$core$Maybe$Nothing,
-				boundaries: boundaries,
-				map: $author$project$Days$Day16$resetMap(map),
-				maximum: 0,
-				startingBeams: $author$project$Days$Day16$getStartingBeams(boundaries)
-			});
-	});
-var $elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
-};
-var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
-var $elm$file$File$toString = _File_toString;
-var $author$project$Days$Day16$updatePartOne = function (partOneModel) {
-	var activeBeams = partOneModel.activeBeams;
-	var map = partOneModel.map;
-	return (!$elm$core$List$isEmpty(activeBeams)) ? _Utils_Tuple2(
-		$author$project$Days$Day16$ResolvingPartOne(
-			$author$project$Days$Day16$updateBeams(partOneModel)),
-		A2($author$project$Days$Day16$delayMsg, 50, $author$project$Days$Day16$RunPartOne)) : _Utils_Tuple2(
-		$author$project$Days$Day16$ResolvingPartOne(
-			_Utils_update(
-				partOneModel,
-				{
-					answer: $elm$core$Maybe$Just(
-						$elm$core$String$fromInt(
-							$author$project$Days$Day16$getAmountOfCellsTouchedByBeam(map)))
-				})),
-		$elm$core$Platform$Cmd$none);
-};
-var $author$project$Days$Day16$update = F2(
+var $author$project$Days$Day17$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'GotFile':
@@ -11216,17 +11384,17 @@ var $author$project$Days$Day16$update = F2(
 					model,
 					A2(
 						$elm$core$Task$perform,
-						$author$project$Days$Day16$NewInputParsed,
+						$author$project$Days$Day17$NewInputParsed,
 						A2(
 							$elm$core$Task$map,
-							$author$project$Days$Day16$fromInput,
+							$author$project$Days$Day17$fromInput,
 							$elm$file$File$toString(file))));
 			case 'NewInputParsed':
 				var map = msg.a;
 				return _Utils_Tuple2(
-					$author$project$Days$Day16$GotInput(
+					$author$project$Days$Day17$GotInput(
 						{
-							boundaries: $author$project$Days$Day16$getBoundaries(map),
+							destination: $author$project$Days$Day17$getBottomRightCell(map),
 							map: map
 						}),
 					$elm$core$Platform$Cmd$none);
@@ -11234,15 +11402,15 @@ var $author$project$Days$Day16$update = F2(
 				switch (model.$) {
 					case 'GotInput':
 						var map = model.a.map;
-						var boundaries = model.a.boundaries;
-						return A2($author$project$Days$Day16$initiatePartOne, map, boundaries);
+						var destination = model.a.destination;
+						return A2($author$project$Days$Day17$initiatePartOne, map, destination);
 					case 'ResolvingPartTwo':
 						var map = model.a.map;
-						var boundaries = model.a.boundaries;
-						return A2($author$project$Days$Day16$initiatePartOne, map, boundaries);
+						var destination = model.a.destination;
+						return A2($author$project$Days$Day17$initiatePartOne, map, destination);
 					case 'ResolvingPartOne':
 						var subModel = model.a;
-						return $author$project$Days$Day16$updatePartOne(subModel);
+						return $author$project$Days$Day17$updatePartOne(subModel);
 					default:
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -11250,21 +11418,21 @@ var $author$project$Days$Day16$update = F2(
 				switch (model.$) {
 					case 'GotInput':
 						var map = model.a.map;
-						var boundaries = model.a.boundaries;
-						return A2($author$project$Days$Day16$initiatePartTwo, map, boundaries);
+						var destination = model.a.destination;
+						return A2($author$project$Days$Day17$initiatePartTwo, map, destination);
 					case 'ResolvingPartOne':
 						var map = model.a.map;
-						var boundaries = model.a.boundaries;
-						return A2($author$project$Days$Day16$initiatePartTwo, map, boundaries);
+						var destination = model.a.destination;
+						return A2($author$project$Days$Day17$initiatePartTwo, map, destination);
 					case 'ResolvingPartTwo':
 						var subModel = model.a;
-						return $author$project$Days$Day16$updatePartTwo(subModel);
+						return $author$project$Days$Day17$updatePartTwo(subModel);
 					default:
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 		}
 	});
-var $author$project$Days$Day16$GotFile = function (a) {
+var $author$project$Days$Day17$GotFile = function (a) {
 	return {$: 'GotFile', a: a};
 };
 var $elm$file$File$decoder = _File_decoder;
@@ -11277,344 +11445,135 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
-var $author$project$Utils$Html$none = $elm$html$Html$text('');
-var $elm_community$maybe_extra$Maybe$Extra$unwrap = F3(
-	function (_default, f, m) {
-		if (m.$ === 'Nothing') {
-			return _default;
-		} else {
-			var a = m.a;
-			return f(a);
-		}
+var $elm$core$Set$Set_elm_builtin = function (a) {
+	return {$: 'Set_elm_builtin', a: a};
+};
+var $elm$core$Set$empty = $elm$core$Set$Set_elm_builtin($elm$core$Dict$empty);
+var $elm$core$Set$insert = F2(
+	function (key, _v0) {
+		var dict = _v0.a;
+		return $elm$core$Set$Set_elm_builtin(
+			A3($elm$core$Dict$insert, key, _Utils_Tuple0, dict));
 	});
+var $elm$core$Set$fromList = function (list) {
+	return A3($elm$core$List$foldl, $elm$core$Set$insert, $elm$core$Set$empty, list);
+};
+var $author$project$Utils$Html$none = $elm$html$Html$text('');
 var $author$project$Utils$Html$fromMaybe = function (fn) {
 	return A2($elm_community$maybe_extra$Maybe$Extra$unwrap, $author$project$Utils$Html$none, fn);
 };
-var $elm_community$maybe_extra$Maybe$Extra$isNothing = function (m) {
-	if (m.$ === 'Nothing') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $author$project$Days$Day16$Cell = F2(
-	function (content, beams) {
-		return {beams: beams, content: content};
+var $author$project$Utils$Html$Attributes$bemConditional = F2(
+	function (base, modifiers) {
+		return $elm$html$Html$Attributes$class(
+			A2(
+				$elm$core$String$join,
+				' ',
+				A2(
+					$elm$core$List$cons,
+					base,
+					A2(
+						$elm$core$List$filterMap,
+						function (_v0) {
+							var modifier = _v0.a;
+							var isActive = _v0.b;
+							return isActive ? $elm$core$Maybe$Just(base + ('--' + modifier)) : $elm$core$Maybe$Nothing;
+						},
+						modifiers))));
 	});
-var $joakin$elm_canvas$Canvas$Internal$Canvas$Fill = function (a) {
-	return {$: 'Fill', a: a};
-};
-var $joakin$elm_canvas$Canvas$Internal$Canvas$SettingDrawOp = function (a) {
-	return {$: 'SettingDrawOp', a: a};
-};
-var $joakin$elm_canvas$Canvas$Settings$fill = function (color) {
-	return $joakin$elm_canvas$Canvas$Internal$Canvas$SettingDrawOp(
-		$joakin$elm_canvas$Canvas$Internal$Canvas$Fill(color));
-};
-var $avh4$elm_color$Color$RgbaSpace = F4(
-	function (a, b, c, d) {
-		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
-	});
-var $avh4$elm_color$Color$scaleFrom255 = function (c) {
-	return c / 255;
-};
-var $avh4$elm_color$Color$rgb255 = F3(
-	function (r, g, b) {
-		return A4(
-			$avh4$elm_color$Color$RgbaSpace,
-			$avh4$elm_color$Color$scaleFrom255(r),
-			$avh4$elm_color$Color$scaleFrom255(g),
-			$avh4$elm_color$Color$scaleFrom255(b),
-			1.0);
-	});
-var $author$project$Days$Day16$gridBackgroundColor = A3($avh4$elm_color$Color$rgb255, 30, 33, 37);
-var $joakin$elm_canvas$Canvas$Internal$Canvas$Rect = F3(
-	function (a, b, c) {
-		return {$: 'Rect', a: a, b: b, c: c};
-	});
-var $joakin$elm_canvas$Canvas$rect = F3(
-	function (pos, width, height) {
-		return A3($joakin$elm_canvas$Canvas$Internal$Canvas$Rect, pos, width, height);
-	});
-var $elm$core$Basics$round = _Basics_round;
-var $joakin$elm_canvas$Canvas$Internal$Canvas$DrawableShapes = function (a) {
-	return {$: 'DrawableShapes', a: a};
-};
-var $joakin$elm_canvas$Canvas$Internal$Canvas$NotSpecified = {$: 'NotSpecified'};
-var $joakin$elm_canvas$Canvas$Internal$Canvas$Renderable = function (a) {
-	return {$: 'Renderable', a: a};
-};
-var $joakin$elm_canvas$Canvas$Internal$Canvas$FillAndStroke = F2(
-	function (a, b) {
-		return {$: 'FillAndStroke', a: a, b: b};
-	});
-var $joakin$elm_canvas$Canvas$Internal$Canvas$Stroke = function (a) {
-	return {$: 'Stroke', a: a};
-};
-var $joakin$elm_canvas$Canvas$mergeDrawOp = F2(
-	function (op1, op2) {
-		var _v0 = _Utils_Tuple2(op1, op2);
-		_v0$7:
-		while (true) {
-			switch (_v0.b.$) {
-				case 'FillAndStroke':
-					var _v1 = _v0.b;
-					var c = _v1.a;
-					var sc = _v1.b;
-					return A2($joakin$elm_canvas$Canvas$Internal$Canvas$FillAndStroke, c, sc);
-				case 'Fill':
-					switch (_v0.a.$) {
-						case 'Fill':
-							var c = _v0.b.a;
-							return $joakin$elm_canvas$Canvas$Internal$Canvas$Fill(c);
-						case 'Stroke':
-							var c1 = _v0.a.a;
-							var c2 = _v0.b.a;
-							return A2($joakin$elm_canvas$Canvas$Internal$Canvas$FillAndStroke, c2, c1);
-						case 'FillAndStroke':
-							var _v2 = _v0.a;
-							var sc = _v2.b;
-							var c2 = _v0.b.a;
-							return A2($joakin$elm_canvas$Canvas$Internal$Canvas$FillAndStroke, c2, sc);
-						default:
-							break _v0$7;
-					}
-				case 'Stroke':
-					switch (_v0.a.$) {
-						case 'Stroke':
-							var c = _v0.b.a;
-							return $joakin$elm_canvas$Canvas$Internal$Canvas$Stroke(c);
-						case 'Fill':
-							var c1 = _v0.a.a;
-							var c2 = _v0.b.a;
-							return A2($joakin$elm_canvas$Canvas$Internal$Canvas$FillAndStroke, c1, c2);
-						case 'FillAndStroke':
-							var _v3 = _v0.a;
-							var c = _v3.a;
-							var sc2 = _v0.b.a;
-							return A2($joakin$elm_canvas$Canvas$Internal$Canvas$FillAndStroke, c, sc2);
-						default:
-							break _v0$7;
-					}
-				default:
-					if (_v0.a.$ === 'NotSpecified') {
-						break _v0$7;
-					} else {
-						var whatever = _v0.a;
-						var _v5 = _v0.b;
-						return whatever;
-					}
-			}
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
 		}
-		var _v4 = _v0.a;
-		var whatever = _v0.b;
-		return whatever;
 	});
-var $joakin$elm_canvas$Canvas$addSettingsToRenderable = F2(
-	function (settings, renderable) {
-		var addSetting = F2(
-			function (setting, _v1) {
-				var r = _v1.a;
-				return $joakin$elm_canvas$Canvas$Internal$Canvas$Renderable(
-					function () {
-						switch (setting.$) {
-							case 'SettingCommand':
-								var cmd = setting.a;
-								return _Utils_update(
-									r,
-									{
-										commands: A2($elm$core$List$cons, cmd, r.commands)
-									});
-							case 'SettingCommands':
-								var cmds = setting.a;
-								return _Utils_update(
-									r,
-									{
-										commands: A3($elm$core$List$foldl, $elm$core$List$cons, r.commands, cmds)
-									});
-							case 'SettingUpdateDrawable':
-								var f = setting.a;
-								return _Utils_update(
-									r,
-									{
-										drawable: f(r.drawable)
-									});
-							default:
-								var op = setting.a;
-								return _Utils_update(
-									r,
-									{
-										drawOp: A2($joakin$elm_canvas$Canvas$mergeDrawOp, r.drawOp, op)
-									});
-						}
-					}());
-			});
-		return A3($elm$core$List$foldl, addSetting, renderable, settings);
+var $elm$core$Dict$member = F2(
+	function (key, dict) {
+		var _v0 = A2($elm$core$Dict$get, key, dict);
+		if (_v0.$ === 'Just') {
+			return true;
+		} else {
+			return false;
+		}
 	});
-var $joakin$elm_canvas$Canvas$shapes = F2(
-	function (settings, ss) {
+var $elm$core$Set$member = F2(
+	function (key, _v0) {
+		var dict = _v0.a;
+		return A2($elm$core$Dict$member, key, dict);
+	});
+var $elm$core$Tuple$pair = F2(
+	function (a, b) {
+		return _Utils_Tuple2(a, b);
+	});
+var $author$project$Days$Day17$mapDisplay = function (_v0) {
+	var map = _v0.map;
+	var cheapestPath = _v0.cheapestPath;
+	var xBoundary = _v0.xBoundary;
+	var yBoundary = _v0.yBoundary;
+	var xRange = A2($elm$core$List$range, 0, xBoundary);
+	var handleRow = function (y) {
 		return A2(
-			$joakin$elm_canvas$Canvas$addSettingsToRenderable,
-			settings,
-			$joakin$elm_canvas$Canvas$Internal$Canvas$Renderable(
-				{
-					commands: _List_Nil,
-					drawOp: $joakin$elm_canvas$Canvas$Internal$Canvas$NotSpecified,
-					drawable: $joakin$elm_canvas$Canvas$Internal$Canvas$DrawableShapes(ss)
-				}));
-	});
-var $avh4$elm_color$Color$green = A4($avh4$elm_color$Color$RgbaSpace, 115 / 255, 210 / 255, 22 / 255, 1.0);
-var $author$project$Utils$Various$iff = F3(
-	function (pred, ifTrue, ifFalse) {
-		return pred ? ifTrue : ifFalse;
-	});
-var $joakin$elm_canvas$Canvas$Internal$Canvas$LineTo = function (a) {
-	return {$: 'LineTo', a: a};
-};
-var $joakin$elm_canvas$Canvas$lineTo = function (point) {
-	return $joakin$elm_canvas$Canvas$Internal$Canvas$LineTo(point);
-};
-var $joakin$elm_canvas$Canvas$Internal$Canvas$SettingCommand = function (a) {
-	return {$: 'SettingCommand', a: a};
-};
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$field = F2(
-	function (name, value) {
-		return $elm$json$Json$Encode$object(
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					_Utils_Tuple2(
-					'type',
-					$elm$json$Json$Encode$string('field')),
-					_Utils_Tuple2(
-					'name',
-					$elm$json$Json$Encode$string(name)),
-					_Utils_Tuple2('value', value)
-				]));
-	});
-var $elm$json$Json$Encode$float = _Json_wrap;
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$lineWidth = function (value) {
-	return A2(
-		$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$field,
-		'lineWidth',
-		$elm$json$Json$Encode$float(value));
-};
-var $joakin$elm_canvas$Canvas$Settings$Line$lineWidth = function (width) {
-	return $joakin$elm_canvas$Canvas$Internal$Canvas$SettingCommand(
-		$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$lineWidth(width));
-};
-var $joakin$elm_canvas$Canvas$Internal$Canvas$Path = F2(
-	function (a, b) {
-		return {$: 'Path', a: a, b: b};
-	});
-var $joakin$elm_canvas$Canvas$path = F2(
-	function (startingPoint, segments) {
-		return A2($joakin$elm_canvas$Canvas$Internal$Canvas$Path, startingPoint, segments);
-	});
-var $avh4$elm_color$Color$red = A4($avh4$elm_color$Color$RgbaSpace, 204 / 255, 0 / 255, 0 / 255, 1.0);
-var $joakin$elm_canvas$Canvas$Settings$stroke = function (color) {
-	return $joakin$elm_canvas$Canvas$Internal$Canvas$SettingDrawOp(
-		$joakin$elm_canvas$Canvas$Internal$Canvas$Stroke(color));
-};
-var $author$project$Days$Day16$toCellRenderables = F2(
-	function (_v0, _v1) {
-		var x = _v0.a;
-		var y = _v0.b;
-		var content = _v1.content;
-		var beams = _v1.beams;
-		var makeMirrorShape = F2(
-			function (startingPoint, endingPoint) {
-				return _List_fromArray(
-					[
-						A2(
-						$joakin$elm_canvas$Canvas$shapes,
-						_List_fromArray(
-							[
-								$joakin$elm_canvas$Canvas$Settings$stroke($avh4$elm_color$Color$red),
-								$joakin$elm_canvas$Canvas$Settings$Line$lineWidth(2.5)
-							]),
+					$elm$html$Html$Attributes$class('nodes')
+				]),
+			A2(
+				$elm$core$List$map,
+				function (_v1) {
+					var x = _v1.a;
+					var weight = _v1.b;
+					return A2(
+						$elm$html$Html$span,
 						_List_fromArray(
 							[
 								A2(
-								$joakin$elm_canvas$Canvas$path,
-								startingPoint,
+								$author$project$Utils$Html$Attributes$bemConditional,
+								'node',
 								_List_fromArray(
 									[
-										$joakin$elm_canvas$Canvas$lineTo(endingPoint)
+										_Utils_Tuple2(
+										'path',
+										A2(
+											$elm$core$Set$member,
+											_Utils_Tuple2(x, y),
+											cheapestPath))
 									]))
-							]))
-					]);
-			});
-		var _v2 = _Utils_Tuple2(x * 17.0, y * 17.0);
-		var canvasX = _v2.a;
-		var canvasY = _v2.b;
-		var horizontalBeam = function () {
-			if (beams.left || beams.right) {
-				var strokeLength = A3($author$project$Utils$Various$iff, beams.left && beams.right, 17.0, 9.0);
-				var startingPointX = A3($author$project$Utils$Various$iff, beams.left, canvasX, canvasX + 8.0);
-				return _List_fromArray(
-					[
-						A2(
-						$joakin$elm_canvas$Canvas$path,
-						_Utils_Tuple2(startingPointX, canvasY + 8.5),
+							]),
 						_List_fromArray(
 							[
-								$joakin$elm_canvas$Canvas$lineTo(
-								_Utils_Tuple2(startingPointX + strokeLength, canvasY + 8.5))
-							]))
-					]);
-			} else {
-				return _List_Nil;
-			}
-		}();
-		var mirrorShape = _Utils_eq(content, $author$project$Days$Day16$MirrorLeft) ? A2(
-			makeMirrorShape,
-			_Utils_Tuple2(canvasX + 3.5, canvasY + 3.5),
-			_Utils_Tuple2(canvasX + 13.5, canvasY + 13.5)) : (_Utils_eq(content, $author$project$Days$Day16$MirrorRight) ? A2(
-			makeMirrorShape,
-			_Utils_Tuple2(canvasX + 13.5, canvasY + 3.5),
-			_Utils_Tuple2(canvasX + 3.5, canvasY + 13.5)) : (_Utils_eq(content, $author$project$Days$Day16$SplitterHorizontal) ? A2(
-			makeMirrorShape,
-			_Utils_Tuple2(canvasX + 2.5, canvasY + 8.5),
-			_Utils_Tuple2(canvasX + 14.5, canvasY + 8.5)) : (_Utils_eq(content, $author$project$Days$Day16$SplitterVertical) ? A2(
-			makeMirrorShape,
-			_Utils_Tuple2(canvasX + 8.5, canvasY + 2.5),
-			_Utils_Tuple2(canvasX + 8.5, canvasY + 14.5)) : _List_Nil)));
-		var verticalBeam = function () {
-			if (beams.up || beams.down) {
-				var strokeLength = A3($author$project$Utils$Various$iff, beams.up && beams.down, 17.0, 9.0);
-				var startingPointY = A3($author$project$Utils$Various$iff, beams.up, canvasY, canvasY + 8.0);
-				return _List_fromArray(
-					[
-						A2(
-						$joakin$elm_canvas$Canvas$path,
-						_Utils_Tuple2(canvasX + 8.5, startingPointY),
-						_List_fromArray(
-							[
-								$joakin$elm_canvas$Canvas$lineTo(
-								_Utils_Tuple2(canvasX + 8.5, startingPointY + strokeLength))
-							]))
-					]);
-			} else {
-				return _List_Nil;
-			}
-		}();
-		var beamsShape = (beams.up || (beams.right || (beams.down || beams.left))) ? _List_fromArray(
-			[
+								$elm$html$Html$text(
+								$elm$core$String$fromFloat(weight))
+							]));
+				},
 				A2(
-				$joakin$elm_canvas$Canvas$shapes,
-				_List_fromArray(
-					[
-						$joakin$elm_canvas$Canvas$Settings$stroke($avh4$elm_color$Color$green),
-						$joakin$elm_canvas$Canvas$Settings$Line$lineWidth(1.0)
-					]),
-				_Utils_ap(horizontalBeam, verticalBeam))
-			]) : _List_Nil;
-		return $elm$core$List$concat(
-			_List_fromArray(
-				[mirrorShape, beamsShape]));
-	});
-var $elm$html$Html$canvas = _VirtualDom_node('canvas');
-var $joakin$elm_canvas$Canvas$cnvs = A2($elm$html$Html$canvas, _List_Nil, _List_Nil);
+					$elm$core$List$filterMap,
+					function (x) {
+						return A2(
+							$elm$core$Maybe$map,
+							$elm$core$Tuple$pair(x),
+							A2(
+								$elm$core$Dict$get,
+								_Utils_Tuple2(x, y),
+								map));
+					},
+					xRange)));
+	};
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('mt-3')
+			]),
+		A2(
+			$elm$core$List$map,
+			handleRow,
+			A2($elm$core$List$range, 0, yBoundary)));
+};
+var $elm$json$Json$Encode$null = _Json_encodeNull;
 var $elm$virtual_dom$VirtualDom$property = F2(
 	function (key, value) {
 		return A2(
@@ -11623,857 +11582,40 @@ var $elm$virtual_dom$VirtualDom$property = F2(
 			_VirtualDom_noJavaScriptOrHtmlJson(value));
 	});
 var $elm$html$Html$Attributes$property = $elm$virtual_dom$VirtualDom$property;
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$commands = function (list) {
-	return A2(
-		$elm$html$Html$Attributes$property,
-		'cmds',
-		A2($elm$json$Json$Encode$list, $elm$core$Basics$identity, list));
-};
-var $elm$html$Html$Attributes$height = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'height',
-		$elm$core$String$fromInt(n));
-};
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$empty = _List_Nil;
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn = F2(
-	function (name, args) {
-		return $elm$json$Json$Encode$object(
-			_List_fromArray(
-				[
-					_Utils_Tuple2(
-					'type',
-					$elm$json$Json$Encode$string('function')),
-					_Utils_Tuple2(
-					'name',
-					$elm$json$Json$Encode$string(name)),
-					_Utils_Tuple2(
-					'args',
-					A2($elm$json$Json$Encode$list, $elm$core$Basics$identity, args))
-				]));
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$beginPath = A2($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn, 'beginPath', _List_Nil);
-var $elm$core$String$concat = function (strings) {
-	return A2($elm$core$String$join, '', strings);
-};
-var $avh4$elm_color$Color$toCssString = function (_v0) {
-	var r = _v0.a;
-	var g = _v0.b;
-	var b = _v0.c;
-	var a = _v0.d;
-	var roundTo = function (x) {
-		return $elm$core$Basics$round(x * 1000) / 1000;
-	};
-	var pct = function (x) {
-		return $elm$core$Basics$round(x * 10000) / 100;
-	};
-	return $elm$core$String$concat(
-		_List_fromArray(
-			[
-				'rgba(',
-				$elm$core$String$fromFloat(
-				pct(r)),
-				'%,',
-				$elm$core$String$fromFloat(
-				pct(g)),
-				'%,',
-				$elm$core$String$fromFloat(
-				pct(b)),
-				'%,',
-				$elm$core$String$fromFloat(
-				roundTo(a)),
-				')'
-			]));
-};
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fillStyle = function (color) {
-	return A2(
-		$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$field,
-		'fillStyle',
-		$elm$json$Json$Encode$string(
-			$avh4$elm_color$Color$toCssString(color)));
-};
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$clearRect = F4(
-	function (x, y, width, height) {
-		return A2(
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-			'clearRect',
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$float(x),
-					$elm$json$Json$Encode$float(y),
-					$elm$json$Json$Encode$float(width),
-					$elm$json$Json$Encode$float(height)
-				]));
-	});
-var $joakin$elm_canvas$Canvas$renderClear = F4(
-	function (_v0, w, h, cmds) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return A2(
-			$elm$core$List$cons,
-			A4($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$clearRect, x, y, w, h),
-			cmds);
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$arc = F6(
-	function (x, y, radius, startAngle, endAngle, anticlockwise) {
-		return A2(
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-			'arc',
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$float(x),
-					$elm$json$Json$Encode$float(y),
-					$elm$json$Json$Encode$float(radius),
-					$elm$json$Json$Encode$float(startAngle),
-					$elm$json$Json$Encode$float(endAngle),
-					$elm$json$Json$Encode$bool(anticlockwise)
-				]));
-	});
-var $elm$core$Basics$pi = _Basics_pi;
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$circle = F3(
-	function (x, y, r) {
-		return A6($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$arc, x, y, r, 0, 2 * $elm$core$Basics$pi, false);
-	});
-var $elm$core$Basics$cos = _Basics_cos;
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$moveTo = F2(
-	function (x, y) {
-		return A2(
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-			'moveTo',
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$float(x),
-					$elm$json$Json$Encode$float(y)
-				]));
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$rect = F4(
-	function (x, y, w, h) {
-		return A2(
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-			'rect',
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$float(x),
-					$elm$json$Json$Encode$float(y),
-					$elm$json$Json$Encode$float(w),
-					$elm$json$Json$Encode$float(h)
-				]));
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$arcTo = F5(
-	function (x1, y1, x2, y2, radius) {
-		return A2(
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-			'arcTo',
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$float(x1),
-					$elm$json$Json$Encode$float(y1),
-					$elm$json$Json$Encode$float(x2),
-					$elm$json$Json$Encode$float(y2),
-					$elm$json$Json$Encode$float(radius)
-				]));
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$bezierCurveTo = F6(
-	function (cp1x, cp1y, cp2x, cp2y, x, y) {
-		return A2(
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-			'bezierCurveTo',
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$float(cp1x),
-					$elm$json$Json$Encode$float(cp1y),
-					$elm$json$Json$Encode$float(cp2x),
-					$elm$json$Json$Encode$float(cp2y),
-					$elm$json$Json$Encode$float(x),
-					$elm$json$Json$Encode$float(y)
-				]));
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$lineTo = F2(
-	function (x, y) {
-		return A2(
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-			'lineTo',
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$float(x),
-					$elm$json$Json$Encode$float(y)
-				]));
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$quadraticCurveTo = F4(
-	function (cpx, cpy, x, y) {
-		return A2(
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-			'quadraticCurveTo',
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$float(cpx),
-					$elm$json$Json$Encode$float(cpy),
-					$elm$json$Json$Encode$float(x),
-					$elm$json$Json$Encode$float(y)
-				]));
-	});
-var $joakin$elm_canvas$Canvas$renderLineSegment = F2(
-	function (segment, cmds) {
-		switch (segment.$) {
-			case 'ArcTo':
-				var _v1 = segment.a;
-				var x = _v1.a;
-				var y = _v1.b;
-				var _v2 = segment.b;
-				var x2 = _v2.a;
-				var y2 = _v2.b;
-				var radius = segment.c;
-				return A2(
-					$elm$core$List$cons,
-					A5($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$arcTo, x, y, x2, y2, radius),
-					cmds);
-			case 'BezierCurveTo':
-				var _v3 = segment.a;
-				var cp1x = _v3.a;
-				var cp1y = _v3.b;
-				var _v4 = segment.b;
-				var cp2x = _v4.a;
-				var cp2y = _v4.b;
-				var _v5 = segment.c;
-				var x = _v5.a;
-				var y = _v5.b;
-				return A2(
-					$elm$core$List$cons,
-					A6($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$bezierCurveTo, cp1x, cp1y, cp2x, cp2y, x, y),
-					cmds);
-			case 'LineTo':
-				var _v6 = segment.a;
-				var x = _v6.a;
-				var y = _v6.b;
-				return A2(
-					$elm$core$List$cons,
-					A2($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$lineTo, x, y),
-					cmds);
-			case 'MoveTo':
-				var _v7 = segment.a;
-				var x = _v7.a;
-				var y = _v7.b;
-				return A2(
-					$elm$core$List$cons,
-					A2($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$moveTo, x, y),
-					cmds);
-			default:
-				var _v8 = segment.a;
-				var cpx = _v8.a;
-				var cpy = _v8.b;
-				var _v9 = segment.b;
-				var x = _v9.a;
-				var y = _v9.b;
-				return A2(
-					$elm$core$List$cons,
-					A4($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$quadraticCurveTo, cpx, cpy, x, y),
-					cmds);
-		}
-	});
-var $elm$core$Basics$sin = _Basics_sin;
-var $joakin$elm_canvas$Canvas$renderShape = F2(
-	function (shape, cmds) {
-		switch (shape.$) {
-			case 'Rect':
-				var _v1 = shape.a;
-				var x = _v1.a;
-				var y = _v1.b;
-				var w = shape.b;
-				var h = shape.c;
-				return A2(
-					$elm$core$List$cons,
-					A4($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$rect, x, y, w, h),
-					A2(
-						$elm$core$List$cons,
-						A2($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$moveTo, x, y),
-						cmds));
-			case 'Circle':
-				var _v2 = shape.a;
-				var x = _v2.a;
-				var y = _v2.b;
-				var r = shape.b;
-				return A2(
-					$elm$core$List$cons,
-					A3($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$circle, x, y, r),
-					A2(
-						$elm$core$List$cons,
-						A2($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$moveTo, x + r, y),
-						cmds));
-			case 'Path':
-				var _v3 = shape.a;
-				var x = _v3.a;
-				var y = _v3.b;
-				var segments = shape.b;
-				return A3(
-					$elm$core$List$foldl,
-					$joakin$elm_canvas$Canvas$renderLineSegment,
-					A2(
-						$elm$core$List$cons,
-						A2($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$moveTo, x, y),
-						cmds),
-					segments);
-			default:
-				var _v4 = shape.a;
-				var x = _v4.a;
-				var y = _v4.b;
-				var radius = shape.b;
-				var startAngle = shape.c;
-				var endAngle = shape.d;
-				var anticlockwise = shape.e;
-				return A2(
-					$elm$core$List$cons,
-					A2(
-						$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$moveTo,
-						x + (radius * $elm$core$Basics$cos(endAngle)),
-						y + (radius * $elm$core$Basics$sin(endAngle))),
-					A2(
-						$elm$core$List$cons,
-						A6($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$arc, x, y, radius, startAngle, endAngle, anticlockwise),
-						A2(
-							$elm$core$List$cons,
-							A2(
-								$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$moveTo,
-								x + (radius * $elm$core$Basics$cos(startAngle)),
-								y + (radius * $elm$core$Basics$sin(startAngle))),
-							cmds)));
-		}
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$NonZero = {$: 'NonZero'};
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fillRuleToString = function (fillRule) {
-	if (fillRule.$ === 'NonZero') {
-		return 'nonzero';
-	} else {
-		return 'evenodd';
-	}
-};
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fill = function (fillRule) {
-	return A2(
-		$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-		'fill',
-		_List_fromArray(
-			[
-				$elm$json$Json$Encode$string(
-				$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fillRuleToString(fillRule))
-			]));
-};
-var $joakin$elm_canvas$Canvas$renderShapeFill = F2(
-	function (maybeColor, cmds) {
-		return A2(
-			$elm$core$List$cons,
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fill($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$NonZero),
-			function () {
-				if (maybeColor.$ === 'Just') {
-					var color = maybeColor.a;
-					return A2(
-						$elm$core$List$cons,
-						$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fillStyle(color),
-						cmds);
-				} else {
-					return cmds;
-				}
-			}());
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$stroke = A2($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn, 'stroke', _List_Nil);
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$strokeStyle = function (color) {
-	return A2(
-		$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$field,
-		'strokeStyle',
-		$elm$json$Json$Encode$string(
-			$avh4$elm_color$Color$toCssString(color)));
-};
-var $joakin$elm_canvas$Canvas$renderShapeStroke = F2(
-	function (maybeColor, cmds) {
-		return A2(
-			$elm$core$List$cons,
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$stroke,
-			function () {
-				if (maybeColor.$ === 'Just') {
-					var color = maybeColor.a;
-					return A2(
-						$elm$core$List$cons,
-						$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$strokeStyle(color),
-						cmds);
-				} else {
-					return cmds;
-				}
-			}());
-	});
-var $joakin$elm_canvas$Canvas$renderShapeDrawOp = F2(
-	function (drawOp, cmds) {
-		switch (drawOp.$) {
-			case 'NotSpecified':
-				return A2(
-					$joakin$elm_canvas$Canvas$renderShapeStroke,
-					$elm$core$Maybe$Nothing,
-					A2($joakin$elm_canvas$Canvas$renderShapeFill, $elm$core$Maybe$Nothing, cmds));
-			case 'Fill':
-				var c = drawOp.a;
-				return A2(
-					$joakin$elm_canvas$Canvas$renderShapeFill,
-					$elm$core$Maybe$Just(c),
-					cmds);
-			case 'Stroke':
-				var c = drawOp.a;
-				return A2(
-					$joakin$elm_canvas$Canvas$renderShapeStroke,
-					$elm$core$Maybe$Just(c),
-					cmds);
-			default:
-				var fc = drawOp.a;
-				var sc = drawOp.b;
-				return A2(
-					$joakin$elm_canvas$Canvas$renderShapeStroke,
-					$elm$core$Maybe$Just(sc),
-					A2(
-						$joakin$elm_canvas$Canvas$renderShapeFill,
-						$elm$core$Maybe$Just(fc),
-						cmds));
-		}
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fillText = F4(
-	function (text, x, y, maybeMaxWidth) {
-		if (maybeMaxWidth.$ === 'Nothing') {
-			return A2(
-				$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-				'fillText',
-				_List_fromArray(
-					[
-						$elm$json$Json$Encode$string(text),
-						$elm$json$Json$Encode$float(x),
-						$elm$json$Json$Encode$float(y)
-					]));
-		} else {
-			var maxWidth = maybeMaxWidth.a;
-			return A2(
-				$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-				'fillText',
-				_List_fromArray(
-					[
-						$elm$json$Json$Encode$string(text),
-						$elm$json$Json$Encode$float(x),
-						$elm$json$Json$Encode$float(y),
-						$elm$json$Json$Encode$float(maxWidth)
-					]));
-		}
-	});
-var $joakin$elm_canvas$Canvas$renderTextFill = F5(
-	function (txt, x, y, maybeColor, cmds) {
-		return A2(
-			$elm$core$List$cons,
-			A4($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fillText, txt.text, x, y, txt.maxWidth),
-			function () {
-				if (maybeColor.$ === 'Just') {
-					var color = maybeColor.a;
-					return A2(
-						$elm$core$List$cons,
-						$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fillStyle(color),
-						cmds);
-				} else {
-					return cmds;
-				}
-			}());
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$strokeText = F4(
-	function (text, x, y, maybeMaxWidth) {
-		if (maybeMaxWidth.$ === 'Nothing') {
-			return A2(
-				$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-				'strokeText',
-				_List_fromArray(
-					[
-						$elm$json$Json$Encode$string(text),
-						$elm$json$Json$Encode$float(x),
-						$elm$json$Json$Encode$float(y)
-					]));
-		} else {
-			var maxWidth = maybeMaxWidth.a;
-			return A2(
-				$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-				'strokeText',
-				_List_fromArray(
-					[
-						$elm$json$Json$Encode$string(text),
-						$elm$json$Json$Encode$float(x),
-						$elm$json$Json$Encode$float(y),
-						$elm$json$Json$Encode$float(maxWidth)
-					]));
-		}
-	});
-var $joakin$elm_canvas$Canvas$renderTextStroke = F5(
-	function (txt, x, y, maybeColor, cmds) {
-		return A2(
-			$elm$core$List$cons,
-			A4($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$strokeText, txt.text, x, y, txt.maxWidth),
-			function () {
-				if (maybeColor.$ === 'Just') {
-					var color = maybeColor.a;
-					return A2(
-						$elm$core$List$cons,
-						$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$strokeStyle(color),
-						cmds);
-				} else {
-					return cmds;
-				}
-			}());
-	});
-var $joakin$elm_canvas$Canvas$renderTextDrawOp = F3(
-	function (drawOp, txt, cmds) {
-		var _v0 = txt.point;
-		var x = _v0.a;
-		var y = _v0.b;
-		switch (drawOp.$) {
-			case 'NotSpecified':
-				return A5(
-					$joakin$elm_canvas$Canvas$renderTextStroke,
-					txt,
-					x,
-					y,
-					$elm$core$Maybe$Nothing,
-					A5($joakin$elm_canvas$Canvas$renderTextFill, txt, x, y, $elm$core$Maybe$Nothing, cmds));
-			case 'Fill':
-				var c = drawOp.a;
-				return A5(
-					$joakin$elm_canvas$Canvas$renderTextFill,
-					txt,
-					x,
-					y,
-					$elm$core$Maybe$Just(c),
-					cmds);
-			case 'Stroke':
-				var c = drawOp.a;
-				return A5(
-					$joakin$elm_canvas$Canvas$renderTextStroke,
-					txt,
-					x,
-					y,
-					$elm$core$Maybe$Just(c),
-					cmds);
-			default:
-				var fc = drawOp.a;
-				var sc = drawOp.b;
-				return A5(
-					$joakin$elm_canvas$Canvas$renderTextStroke,
-					txt,
-					x,
-					y,
-					$elm$core$Maybe$Just(sc),
-					A5(
-						$joakin$elm_canvas$Canvas$renderTextFill,
-						txt,
-						x,
-						y,
-						$elm$core$Maybe$Just(fc),
-						cmds));
-		}
-	});
-var $joakin$elm_canvas$Canvas$renderText = F3(
-	function (drawOp, txt, cmds) {
-		return A3($joakin$elm_canvas$Canvas$renderTextDrawOp, drawOp, txt, cmds);
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$drawImage = F9(
-	function (sx, sy, sw, sh, dx, dy, dw, dh, imageObj) {
-		return A2(
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn,
-			'drawImage',
-			_List_fromArray(
-				[
-					imageObj,
-					$elm$json$Json$Encode$float(sx),
-					$elm$json$Json$Encode$float(sy),
-					$elm$json$Json$Encode$float(sw),
-					$elm$json$Json$Encode$float(sh),
-					$elm$json$Json$Encode$float(dx),
-					$elm$json$Json$Encode$float(dy),
-					$elm$json$Json$Encode$float(dw),
-					$elm$json$Json$Encode$float(dh)
-				]));
-	});
-var $joakin$elm_canvas$Canvas$Internal$Texture$drawTexture = F4(
-	function (x, y, t, cmds) {
-		return A2(
-			$elm$core$List$cons,
-			function () {
-				if (t.$ === 'TImage') {
-					var image = t.a;
-					return A9($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$drawImage, 0, 0, image.width, image.height, x, y, image.width, image.height, image.json);
-				} else {
-					var sprite = t.a;
-					var image = t.b;
-					return A9($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$drawImage, sprite.x, sprite.y, sprite.width, sprite.height, x, y, sprite.width, sprite.height, image.json);
-				}
-			}(),
-			cmds);
-	});
-var $joakin$elm_canvas$Canvas$renderTexture = F3(
-	function (_v0, t, cmds) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return A4($joakin$elm_canvas$Canvas$Internal$Texture$drawTexture, x, y, t, cmds);
-	});
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$restore = A2($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn, 'restore', _List_Nil);
-var $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$save = A2($joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fn, 'save', _List_Nil);
-var $joakin$elm_canvas$Canvas$renderDrawable = F3(
-	function (drawable, drawOp, cmds) {
-		switch (drawable.$) {
-			case 'DrawableText':
-				var txt = drawable.a;
-				return A3($joakin$elm_canvas$Canvas$renderText, drawOp, txt, cmds);
-			case 'DrawableShapes':
-				var ss = drawable.a;
-				return A2(
-					$joakin$elm_canvas$Canvas$renderShapeDrawOp,
-					drawOp,
-					A3(
-						$elm$core$List$foldl,
-						$joakin$elm_canvas$Canvas$renderShape,
-						A2($elm$core$List$cons, $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$beginPath, cmds),
-						ss));
-			case 'DrawableTexture':
-				var p = drawable.a;
-				var t = drawable.b;
-				return A3($joakin$elm_canvas$Canvas$renderTexture, p, t, cmds);
-			case 'DrawableClear':
-				var p = drawable.a;
-				var w = drawable.b;
-				var h = drawable.c;
-				return A4($joakin$elm_canvas$Canvas$renderClear, p, w, h, cmds);
-			default:
-				var renderables = drawable.a;
-				return A3($joakin$elm_canvas$Canvas$renderGroup, drawOp, renderables, cmds);
-		}
-	});
-var $joakin$elm_canvas$Canvas$renderGroup = F3(
-	function (drawOp, renderables, cmds) {
-		var cmdsWithDraw = function () {
-			switch (drawOp.$) {
-				case 'NotSpecified':
-					return cmds;
-				case 'Fill':
-					var c = drawOp.a;
-					return A2(
-						$elm$core$List$cons,
-						$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fillStyle(c),
-						cmds);
-				case 'Stroke':
-					var c = drawOp.a;
-					return A2(
-						$elm$core$List$cons,
-						$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$strokeStyle(c),
-						cmds);
-				default:
-					var fc = drawOp.a;
-					var sc = drawOp.b;
-					return A2(
-						$elm$core$List$cons,
-						$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$fillStyle(fc),
-						A2(
-							$elm$core$List$cons,
-							$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$strokeStyle(sc),
-							cmds));
-			}
-		}();
-		return A3(
-			$elm$core$List$foldl,
-			$joakin$elm_canvas$Canvas$renderOne(drawOp),
-			cmdsWithDraw,
-			renderables);
-	});
-var $joakin$elm_canvas$Canvas$renderOne = F3(
-	function (parentDrawOp, _v0, cmds) {
-		var commands = _v0.a.commands;
-		var drawable = _v0.a.drawable;
-		var drawOp = _v0.a.drawOp;
-		return A2(
-			$elm$core$List$cons,
-			$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$restore,
-			A3(
-				$joakin$elm_canvas$Canvas$renderDrawable,
-				drawable,
-				A2($joakin$elm_canvas$Canvas$mergeDrawOp, parentDrawOp, drawOp),
-				_Utils_ap(
-					commands,
-					A2($elm$core$List$cons, $joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$save, cmds))));
-	});
-var $joakin$elm_canvas$Canvas$render = function (entities) {
-	return A3(
-		$elm$core$List$foldl,
-		$joakin$elm_canvas$Canvas$renderOne($joakin$elm_canvas$Canvas$Internal$Canvas$NotSpecified),
-		$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$empty,
-		entities);
-};
-var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
-var $joakin$elm_canvas$Canvas$Internal$Texture$TImage = function (a) {
-	return {$: 'TImage', a: a};
-};
-var $elm$json$Json$Decode$andThen = _Json_andThen;
-var $joakin$elm_canvas$Canvas$Internal$Texture$decodeTextureImage = A2(
-	$elm$json$Json$Decode$andThen,
-	function (image) {
-		return A4(
-			$elm$json$Json$Decode$map3,
-			F3(
-				function (tagName, width, height) {
-					return (tagName === 'IMG') ? $elm$core$Maybe$Just(
-						$joakin$elm_canvas$Canvas$Internal$Texture$TImage(
-							{height: height, json: image, width: width})) : $elm$core$Maybe$Nothing;
-				}),
-			A2($elm$json$Json$Decode$field, 'tagName', $elm$json$Json$Decode$string),
-			A2($elm$json$Json$Decode$field, 'width', $elm$json$Json$Decode$float),
-			A2($elm$json$Json$Decode$field, 'height', $elm$json$Json$Decode$float));
-	},
-	$elm$json$Json$Decode$value);
-var $joakin$elm_canvas$Canvas$Internal$Texture$decodeImageLoadEvent = A2($elm$json$Json$Decode$field, 'target', $joakin$elm_canvas$Canvas$Internal$Texture$decodeTextureImage);
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var $joakin$elm_canvas$Canvas$renderTextureSource = function (textureSource) {
-	var url = textureSource.a;
-	var onLoad = textureSource.b;
-	return _Utils_Tuple2(
-		url,
-		A2(
-			$elm$html$Html$img,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$src(url),
-					A2($elm$html$Html$Attributes$attribute, 'crossorigin', 'anonymous'),
-					A2($elm$html$Html$Attributes$style, 'display', 'none'),
-					A2(
-					$elm$html$Html$Events$on,
-					'load',
-					A2($elm$json$Json$Decode$map, onLoad, $joakin$elm_canvas$Canvas$Internal$Texture$decodeImageLoadEvent)),
-					A2(
-					$elm$html$Html$Events$on,
-					'error',
-					$elm$json$Json$Decode$succeed(
-						onLoad($elm$core$Maybe$Nothing)))
-				]),
-			_List_Nil));
-};
-var $elm$html$Html$Attributes$width = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'width',
-		$elm$core$String$fromInt(n));
-};
-var $joakin$elm_canvas$Canvas$toHtmlWith = F3(
-	function (options, attrs, entities) {
-		return A3(
-			$elm$html$Html$Keyed$node,
-			'elm-canvas',
-			A2(
-				$elm$core$List$cons,
-				$joakin$elm_canvas$Canvas$Internal$CustomElementJsonApi$commands(
-					$joakin$elm_canvas$Canvas$render(entities)),
-				A2(
-					$elm$core$List$cons,
-					$elm$html$Html$Attributes$height(options.height),
-					A2(
-						$elm$core$List$cons,
-						$elm$html$Html$Attributes$width(options.width),
-						attrs))),
-			A2(
-				$elm$core$List$cons,
-				_Utils_Tuple2('__canvas', $joakin$elm_canvas$Canvas$cnvs),
-				A2($elm$core$List$map, $joakin$elm_canvas$Canvas$renderTextureSource, options.textures)));
-	});
-var $joakin$elm_canvas$Canvas$toHtml = F3(
-	function (_v0, attrs, entities) {
-		var w = _v0.a;
-		var h = _v0.b;
-		return A3(
-			$joakin$elm_canvas$Canvas$toHtmlWith,
-			{height: h, textures: _List_Nil, width: w},
-			attrs,
-			entities);
-	});
-var $author$project$Days$Day16$mapDisplay = F2(
-	function (_v0, map) {
-		var xBoundary = _v0.a;
-		var yBoundary = _v0.b;
-		var xRange = A2($elm$core$List$range, 0, xBoundary);
-		var defaultCell = A2(
-			$author$project$Days$Day16$Cell,
-			$author$project$Days$Day16$Empty,
-			A4($author$project$Days$Day16$BeamDirections, false, false, false, false));
-		var mapRow = function (y) {
-			return A2(
-				$elm$core$List$concatMap,
-				function (x) {
-					return A2(
-						$author$project$Days$Day16$toCellRenderables,
-						_Utils_Tuple2(x, y),
-						A2(
-							$elm$core$Maybe$withDefault,
-							defaultCell,
-							A2(
-								$elm$core$Dict$get,
-								_Utils_Tuple2(x, y),
-								map)));
-				},
-				xRange);
-		};
-		var _v1 = _Utils_Tuple2(xBoundary * 17.0, yBoundary * 17.0);
-		var width = _v1.a;
-		var height = _v1.b;
-		return A3(
-			$joakin$elm_canvas$Canvas$toHtml,
-			_Utils_Tuple2(
-				$elm$core$Basics$round(width),
-				$elm$core$Basics$round(height)),
-			_List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$style, 'display', 'block'),
-					$elm$html$Html$Attributes$class('mt-3')
-				]),
-			A2(
-				$elm$core$List$cons,
-				A2(
-					$joakin$elm_canvas$Canvas$shapes,
-					_List_fromArray(
-						[
-							$joakin$elm_canvas$Canvas$Settings$fill($author$project$Days$Day16$gridBackgroundColor)
-						]),
-					_List_fromArray(
-						[
-							A3(
-							$joakin$elm_canvas$Canvas$rect,
-							_Utils_Tuple2(0, 0),
-							width,
-							height)
-						])),
-				A2(
-					$elm$core$List$concatMap,
-					mapRow,
-					A2($elm$core$List$range, 0, yBoundary))));
-	});
-var $elm$json$Json$Encode$null = _Json_encodeNull;
 var $author$project$Utils$Html$Attributes$when = F2(
 	function (pred, attr) {
 		return pred ? attr : A2($elm$html$Html$Attributes$property, '', $elm$json$Json$Encode$null);
 	});
-var $author$project$Days$Day16$view = function (model) {
-	var maybeBoundariesAndMap = function () {
+var $author$project$Days$Day17$view = function (model) {
+	var maybeMapSettings = function () {
 		switch (model.$) {
 			case 'GotInput':
-				var boundaries = model.a.boundaries;
 				var map = model.a.map;
+				var destination = model.a.destination;
 				return $elm$core$Maybe$Just(
-					_Utils_Tuple2(boundaries, map));
+					{cheapestPath: $elm$core$Set$empty, map: map, xBoundary: destination.a, yBoundary: destination.b});
 			case 'ResolvingPartOne':
-				var boundaries = model.a.boundaries;
 				var map = model.a.map;
+				var destination = model.a.destination;
+				var cheapestPath = model.a.cheapestPath;
 				return $elm$core$Maybe$Just(
-					_Utils_Tuple2(boundaries, map));
+					{
+						cheapestPath: $elm$core$Set$fromList(cheapestPath),
+						map: map,
+						xBoundary: destination.a,
+						yBoundary: destination.b
+					});
 			case 'ResolvingPartTwo':
-				var boundaries = model.a.boundaries;
 				var map = model.a.map;
+				var destination = model.a.destination;
+				var cheapestPath = model.a.cheapestPath;
 				return $elm$core$Maybe$Just(
-					_Utils_Tuple2(boundaries, map));
+					{
+						cheapestPath: $elm$core$Set$fromList(cheapestPath),
+						map: map,
+						xBoundary: destination.a,
+						yBoundary: destination.b
+					});
 			default:
 				return $elm$core$Maybe$Nothing;
 		}
@@ -12492,15 +11634,11 @@ var $author$project$Days$Day16$view = function (model) {
 					]));
 		});
 	var isRunning = function () {
-		switch (model.$) {
-			case 'ResolvingPartOne':
-				var answer = model.a.answer;
-				return $elm_community$maybe_extra$Maybe$Extra$isNothing(answer);
-			case 'ResolvingPartTwo':
-				var answer = model.a.answer;
-				return $elm_community$maybe_extra$Maybe$Extra$isNothing(answer);
-			default:
-				return false;
+		if (model.$ === 'ResolvingPartOne') {
+			var finalCheapestPathCost = model.a.finalCheapestPathCost;
+			return $elm_community$maybe_extra$Maybe$Extra$isNothing(finalCheapestPathCost);
+		} else {
+			return false;
 		}
 	}();
 	var runPartOneButton = A2(
@@ -12511,7 +11649,7 @@ var $author$project$Days$Day16$view = function (model) {
 				A2(
 				$author$project$Utils$Html$Attributes$when,
 				!isRunning,
-				$elm$html$Html$Events$onClick($author$project$Days$Day16$RunPartOne)),
+				$elm$html$Html$Events$onClick($author$project$Days$Day17$RunPartOne)),
 				$elm$html$Html$Attributes$disabled(isRunning)
 			]),
 		_List_fromArray(
@@ -12526,13 +11664,22 @@ var $author$project$Days$Day16$view = function (model) {
 				A2(
 				$author$project$Utils$Html$Attributes$when,
 				!isRunning,
-				$elm$html$Html$Events$onClick($author$project$Days$Day16$RunPartTwo)),
+				$elm$html$Html$Events$onClick($author$project$Days$Day17$RunPartTwo)),
 				$elm$html$Html$Attributes$disabled(isRunning)
 			]),
 		_List_fromArray(
 			[
 				$elm$html$Html$text('Run part two')
 			]));
+	var getPosition = A2(
+		$elm$core$Basics$composeR,
+		function ($) {
+			return $.node;
+		},
+		function (_v1) {
+			var position = _v1.a;
+			return position;
+		});
 	var fileDecoder = A2(
 		$elm$json$Json$Decode$at,
 		_List_fromArray(
@@ -12547,7 +11694,7 @@ var $author$project$Days$Day16$view = function (model) {
 				A2(
 				$elm$html$Html$Events$on,
 				'change',
-				A2($elm$json$Json$Decode$map, $author$project$Days$Day16$GotFile, fileDecoder))
+				A2($elm$json$Json$Decode$map, $author$project$Days$Day17$GotFile, fileDecoder))
 			]),
 		_List_Nil);
 	var answerDisplay = function () {
@@ -12595,26 +11742,19 @@ var $author$project$Days$Day16$view = function (model) {
 						_List_fromArray(
 							[runPartOneButton, runPartTwoButton, answerDisplay]))
 					])),
-				A2(
-				$author$project$Utils$Html$fromMaybe,
-				function (_v0) {
-					var boundaries = _v0.a;
-					var map = _v0.b;
-					return A2($author$project$Days$Day16$mapDisplay, boundaries, map);
-				},
-				maybeBoundariesAndMap)
+				A2($author$project$Utils$Html$fromMaybe, $author$project$Days$Day17$mapDisplay, maybeMapSettings)
 			]));
 };
-var $author$project$Days$Day16$main = $elm$browser$Browser$element(
+var $author$project$Days$Day17$main = $elm$browser$Browser$element(
 	{
 		init: function (_v0) {
-			return $author$project$Days$Day16$init;
+			return $author$project$Days$Day17$init;
 		},
 		subscriptions: function (_v1) {
 			return $elm$core$Platform$Sub$none;
 		},
-		update: $author$project$Days$Day16$update,
-		view: $author$project$Days$Day16$view
+		update: $author$project$Days$Day17$update,
+		view: $author$project$Days$Day17$view
 	});
-_Platform_export({'Days':{'Day16':{'init':$author$project$Days$Day16$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Days.Day16.Msg","aliases":{"Days.Day16.BeamDirections":{"args":[],"type":"{ up : Basics.Bool, right : Basics.Bool, down : Basics.Bool, left : Basics.Bool }"},"Days.Day16.Cell":{"args":[],"type":"{ content : Days.Day16.CellContent, beams : Days.Day16.BeamDirections }"},"Days.Day16.Map":{"args":[],"type":"Dict.Dict Days.Day16.Position Days.Day16.Cell"},"Days.Day16.Position":{"args":[],"type":"( Days.Day16.X, Days.Day16.Y )"},"Days.Day16.X":{"args":[],"type":"Basics.Int"},"Days.Day16.Y":{"args":[],"type":"Basics.Int"}},"unions":{"Days.Day16.Msg":{"args":[],"tags":{"GotFile":["File.File"],"NewInputParsed":["Days.Day16.Map"],"RunPartOne":[],"RunPartTwo":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Days.Day16.CellContent":{"args":[],"tags":{"Empty":[],"MirrorLeft":[],"MirrorRight":[],"SplitterHorizontal":[],"SplitterVertical":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"File.File":{"args":[],"tags":{"File":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}}});}(this));
+_Platform_export({'Days':{'Day17':{'init':$author$project$Days$Day17$main(
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Days.Day17.Msg","aliases":{"Days.Day17.HeatLoss":{"args":[],"type":"Basics.Float"},"Days.Day17.Map":{"args":[],"type":"Dict.Dict Days.Day17.Position Days.Day17.HeatLoss"},"Days.Day17.Position":{"args":[],"type":"( Basics.Int, Basics.Int )"}},"unions":{"Days.Day17.Msg":{"args":[],"tags":{"GotFile":["File.File"],"NewInputParsed":["Days.Day17.Map"],"RunPartOne":[],"RunPartTwo":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"File.File":{"args":[],"tags":{"File":[]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}}});}(this));

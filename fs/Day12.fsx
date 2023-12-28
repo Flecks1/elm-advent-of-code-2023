@@ -19,6 +19,41 @@ let [<Literal>] Damaged     : Condition = '#'
 let [<Literal>] Unknown     : Condition = '?'
 
 
+// Parsing input
+
+let repeatSprings amount source = seq {
+    yield! source
+
+    let mutable i = amount - 1
+    while i > 0 do
+        yield Unknown
+        yield! source
+        i <- i - 1
+}
+let repeatGroupings amount source = seq {
+    let mutable i = amount
+    while i > 0 do
+        yield! source
+        i <- i - 1
+}
+
+let parseLine (line: string) =
+    match line.Split(" ") with
+    | [| springs; groupings |] ->
+        Some { Springs = springs |> repeatSprings 5 |> Seq.toList
+             ; Groupings = groupings.Split(",") |> Seq.map int |> repeatGroupings 5 |> Seq.toList
+             }
+    | _ -> None
+
+let getRecords () =
+    Seq.tryItem 2 fsi.CommandLineArgs
+    |> Option.defaultValue "..\\inputs\\day-12-input.txt"
+    |> File.ReadLines
+    |> Seq.choose parseLine
+
+
+// Solution implementation
+
 let getAmountOfPossiblePermutations (record: Record) =
     let springs, groupings, springsLength, groupingsLength =
         Seq.toArray record.Springs, Seq.toArray record.Groupings, Seq.length record.Springs, Seq.length  record.Groupings
@@ -88,34 +123,18 @@ let getAmountOfPossiblePermutations (record: Record) =
 
     recursiveHelper 0 0 0
 
-let repeatSprings amount source = seq {
-    yield! source
-
-    let mutable i = amount - 1
-    while i > 0 do
-        yield Unknown
-        yield! source
-        i <- i - 1
-}
-let repeatGroupings amount source = seq {
-    let mutable i = amount
-    while i > 0 do
-        yield! source
-        i <- i - 1
-}
-
-let parseLine (line: string) =
-    match line.Split(" ") with
-    | [| springs; groupings |] ->
-        Some { Springs = springs |> repeatSprings 5 |> Seq.toList
-             ; Groupings = groupings.Split(",") |> Seq.map int |> repeatGroupings 5 |> Seq.toList
-             }
-    | _ -> None
 
 
-File.ReadLines("input.txt")
-|> Seq.choose parseLine
-|> Seq.map getAmountOfPossiblePermutations
-|> Seq.sum
-|> printfn "Answer: %i"
+let solve records =
+    records
+    |> Seq.map getAmountOfPossiblePermutations
+    |> Seq.sum
+    |> printfn "Answer: %i"
 
+
+
+match Seq.tryItem 1 fsi.CommandLineArgs with
+| Some "partTwo" ->
+    printfn "Running part two solution..."
+    solve (getRecords ())
+| _ -> printfn "Oops! Part not specified."

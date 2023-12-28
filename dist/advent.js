@@ -11187,7 +11187,7 @@ var $author$project$Days$Day11$makeMap = function () {
 		});
 	return A2(
 		$elm$core$Basics$composeR,
-		$elm$core$String$split('\u000D\n'),
+		$elm$core$String$split('\n'),
 		A2(
 			$elm_community$list_extra$List$Extra$indexedFoldl,
 			handleRow,

@@ -1,12 +1,14 @@
 {
     "type": "application",
     "source-directories": [
-        "src"
+        "elm"
     ],
     "elm-version": "0.19.1",
     "dependencies": {
         "direct": {
             "Evelios/elm-hash": "1.0.0",
+            "TSFoster/elm-heap": "2.1.2",
+            "avh4/elm-color": "1.0.0",
             "elm/browser": "1.0.2",
             "elm/core": "1.0.5",
             "elm/file": "1.0.5",
@@ -18,7 +20,8 @@
             "elm-community/list-extra": "8.7.0",
             "elm-community/maybe-extra": "5.3.0",
             "elm-community/result-extra": "2.4.0",
-            "elm-community/string-extra": "4.0.1"
+            "elm-community/string-extra": "4.0.1",
+            "joakin/elm-canvas": "5.0.0"
         },
         "indirect": {
             "bonzaico/murmur3": "1.0.0",
