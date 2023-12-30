@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="dist/day-18.js"></script>
+    <link rel="stylesheet" href="vendor/roboto.css" />
+    <link rel="stylesheet" href="vendor/bootstrap.min.css" />
+    <style>
+        .map {
+            font-family: monospace;
+            color: #17191c;
+        }
+        .active-map-cell {
+            color: white;
+        }
+        .map-row {
+            line-height: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        var app = Elm.Days.Day18.init({
+            node: document.getElementById("app")
+        });
+    </script>
+</body>
+</html>
