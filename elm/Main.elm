@@ -8,7 +8,10 @@ import Days.Day12
 import Days.Day13
 import Days.Day14
 import Days.Day15
+import Days.Day19
 import Days.Day2
+import Days.Day20
+import Days.Day21
 import Days.Day3
 import Days.Day4
 import Days.Day5
@@ -62,6 +65,12 @@ puzzles =
     , { identifier = "day14-2", label = "Day 14 (Part Two)", solution = Days.Day14.second }
     , { identifier = "day15-1", label = "Day 15", solution = Days.Day15.first }
     , { identifier = "day15-2", label = "Day 15 (Part Two)", solution = Days.Day15.second }
+    , { identifier = "day19-1", label = "Day 19", solution = Days.Day19.first }
+    , { identifier = "day19-2", label = "Day 19 (Part Two)", solution = Days.Day19.second }
+    , { identifier = "day20-1", label = "Day 20", solution = Days.Day20.first }
+    , { identifier = "day20-2", label = "Day 20 (Part Two)", solution = Days.Day20.second }
+    , { identifier = "day21-1", label = "Day 21", solution = Days.Day21.first }
+    , { identifier = "day21-2", label = "Day 21 (Part Two)", solution = Days.Day21.second }
     ]
 
 

@@ -12488,51 +12488,182 @@ var $author$project$Days$Day15$first = function () {
 					})),
 			$elm$core$Result$map($elm$core$String$fromInt)));
 }();
-var $author$project$Days$Day2$Colors = F3(
-	function (red, green, blue) {
-		return {blue: blue, green: green, red: red};
+var $elm_community$list_extra$List$Extra$Continue = function (a) {
+	return {$: 'Continue', a: a};
+};
+var $elm_community$list_extra$List$Extra$Stop = function (a) {
+	return {$: 'Stop', a: a};
+};
+var $author$project$Utils$Various$iff = F3(
+	function (pred, ifTrue, ifFalse) {
+		return pred ? ifTrue : ifFalse;
 	});
-var $author$project$Days$Day2$getMaxRevealedAmounts = function (_v0) {
-	var reveals = _v0.reveals;
-	var revealedColorStep = F2(
-		function (_v2, colors) {
-			var amount = _v2.a;
-			var color = _v2.b;
-			switch (color.$) {
-				case 'Red':
-					return (_Utils_cmp(amount, colors.red) > 0) ? _Utils_update(
-						colors,
-						{red: amount}) : colors;
-				case 'Green':
-					return (_Utils_cmp(amount, colors.green) > 0) ? _Utils_update(
-						colors,
-						{green: amount}) : colors;
-				default:
-					return (_Utils_cmp(amount, colors.blue) > 0) ? _Utils_update(
-						colors,
-						{blue: amount}) : colors;
+var $elm_community$list_extra$List$Extra$stoppableFoldl = F3(
+	function (func, acc, list) {
+		stoppableFoldl:
+		while (true) {
+			if (!list.b) {
+				return acc;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				var _v1 = A2(func, x, acc);
+				if (_v1.$ === 'Continue') {
+					var newAcc = _v1.a;
+					var $temp$func = func,
+						$temp$acc = newAcc,
+						$temp$list = xs;
+					func = $temp$func;
+					acc = $temp$acc;
+					list = $temp$list;
+					continue stoppableFoldl;
+				} else {
+					var finalAcc = _v1.a;
+					return finalAcc;
+				}
+			}
+		}
+	});
+var $author$project$Days$Day19$isPartAccepted = F3(
+	function (workflows, workflowId, part) {
+		isPartAccepted:
+		while (true) {
+			var fullfillsCondition = F2(
+				function (parameter, condition) {
+					return A2(
+						$elm$core$Basics$composeR,
+						$elm$core$Dict$get(parameter),
+						A2(
+							$elm_community$maybe_extra$Maybe$Extra$unwrap,
+							false,
+							function (partValue) {
+								switch (condition.$) {
+									case 'GreaterThan':
+										var n = condition.a;
+										return _Utils_cmp(partValue, n) > 0;
+									case 'LowerThan':
+										var n = condition.a;
+										return _Utils_cmp(partValue, n) < 0;
+									default:
+										return false;
+								}
+							}));
+				});
+			var goThroughRules = function (rules) {
+				return A3(
+					$elm_community$list_extra$List$Extra$stoppableFoldl,
+					F2(
+						function (_v2, _v3) {
+							var parameter = _v2.parameter;
+							var condition = _v2.condition;
+							var result = _v2.result;
+							return A3(
+								$author$project$Utils$Various$iff,
+								A3(fullfillsCondition, parameter, condition, part),
+								$elm_community$list_extra$List$Extra$Stop(
+									$elm$core$Maybe$Just(result)),
+								$elm_community$list_extra$List$Extra$Continue($elm$core$Maybe$Nothing));
+						}),
+					$elm$core$Maybe$Nothing,
+					rules);
+			};
+			var _v0 = A2($elm$core$Dict$get, workflowId, workflows);
+			if (_v0.$ === 'Just') {
+				var rules = _v0.a.rules;
+				var defaultResult = _v0.a.defaultResult;
+				var _v1 = A2(
+					$elm$core$Maybe$withDefault,
+					defaultResult,
+					goThroughRules(rules));
+				switch (_v1.$) {
+					case 'Accepted':
+						return true;
+					case 'Refused':
+						return false;
+					default:
+						var newWorkflowId = _v1.a;
+						var $temp$workflows = workflows,
+							$temp$workflowId = newWorkflowId,
+							$temp$part = part;
+						workflows = $temp$workflows;
+						workflowId = $temp$workflowId;
+						part = $temp$part;
+						continue isPartAccepted;
+				}
+			} else {
+				return false;
+			}
+		}
+	});
+var $author$project$Days$Day19$PuzzleModel = F2(
+	function (workflows, parts) {
+		return {parts: parts, workflows: workflows};
+	});
+var $author$project$Days$Day19$parseParts = function () {
+	var setParameter = F2(
+		function (str, dict) {
+			var _v0 = A2($elm$core$String$split, '=', str);
+			if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
+				var parameter = _v0.a;
+				var _v1 = _v0.b;
+				var value = _v1.a;
+				return A3(
+					$elm$core$Dict$insert,
+					parameter,
+					A2(
+						$elm$core$Maybe$withDefault,
+						0,
+						$elm$core$String$toInt(value)),
+					dict);
+			} else {
+				return dict;
 			}
 		});
-	var revealStep = F2(
-		function (revealedColors, colors) {
-			return A3($elm$core$List$foldl, revealedColorStep, colors, revealedColors);
-		});
-	return A3(
-		$elm$core$List$foldl,
-		revealStep,
-		A3($author$project$Days$Day2$Colors, 0, 0, 0),
-		reveals);
-};
-var $author$project$Days$Day2$Blue = {$: 'Blue'};
-var $author$project$Days$Day2$Game = F2(
-	function (id, reveals) {
-		return {id: id, reveals: reveals};
+	var parsePart = A2(
+		$elm$core$Basics$composeR,
+		A2($elm$core$String$slice, 1, -1),
+		A2(
+			$elm$core$Basics$composeR,
+			$elm$core$String$split(','),
+			A2($elm$core$List$foldl, setParameter, $elm$core$Dict$empty)));
+	return A2(
+		$elm$core$Basics$composeR,
+		$elm$core$String$split('\n'),
+		$elm$core$List$map(parsePart));
+}();
+var $author$project$Days$Day19$Workflow = F2(
+	function (rules, defaultResult) {
+		return {defaultResult: defaultResult, rules: rules};
 	});
-var $author$project$Days$Day2$Green = {$: 'Green'};
-var $author$project$Days$Day2$Red = {$: 'Red'};
-var $elm$parser$Parser$deadEndsToString = function (deadEnds) {
-	return 'TODO deadEndsToString';
+var $elm$core$String$dropRight = F2(
+	function (n, string) {
+		return (n < 1) ? string : A3($elm$core$String$slice, 0, -n, string);
+	});
+var $author$project$Days$Day19$Accepted = {$: 'Accepted'};
+var $author$project$Days$Day19$GoTo = function (a) {
+	return {$: 'GoTo', a: a};
 };
+var $author$project$Days$Day19$Refused = {$: 'Refused'};
+var $author$project$Days$Day19$parseWorkflowResult = function (str) {
+	switch (str) {
+		case 'A':
+			return $author$project$Days$Day19$Accepted;
+		case 'R':
+			return $author$project$Days$Day19$Refused;
+		default:
+			return $author$project$Days$Day19$GoTo(str);
+	}
+};
+var $author$project$Days$Day19$GreaterThan = function (a) {
+	return {$: 'GreaterThan', a: a};
+};
+var $author$project$Days$Day19$LowerThan = function (a) {
+	return {$: 'LowerThan', a: a};
+};
+var $author$project$Days$Day19$Rule = F3(
+	function (parameter, condition, result) {
+		return {condition: condition, parameter: parameter, result: result};
+	});
 var $elm$parser$Parser$ExpectingInt = {$: 'ExpectingInt'};
 var $elm$parser$Parser$Advanced$consumeBase = _Parser_consumeBase;
 var $elm$parser$Parser$Advanced$consumeBase16 = _Parser_consumeBase16;
@@ -12695,6 +12826,187 @@ var $elm$parser$Parser$Advanced$int = F2(
 			});
 	});
 var $elm$parser$Parser$int = A2($elm$parser$Parser$Advanced$int, $elm$parser$Parser$ExpectingInt, $elm$parser$Parser$ExpectingInt);
+var $author$project$Days$Day19$ruleParser = A2(
+	$elm$parser$Parser$keeper,
+	A2(
+		$elm$parser$Parser$keeper,
+		A2(
+			$elm$parser$Parser$keeper,
+			A2(
+				$elm$parser$Parser$keeper,
+				$elm$parser$Parser$succeed(
+					F4(
+						function (parameter, condition, targetValue, result) {
+							return A3(
+								$author$project$Days$Day19$Rule,
+								parameter,
+								condition(targetValue),
+								result);
+						})),
+				$author$project$Utils$Parser$string($elm$core$Char$isAlpha)),
+			$elm$parser$Parser$oneOf(
+				_List_fromArray(
+					[
+						A2(
+						$elm$parser$Parser$ignorer,
+						$elm$parser$Parser$succeed($author$project$Days$Day19$LowerThan),
+						$elm$parser$Parser$symbol('<')),
+						A2(
+						$elm$parser$Parser$ignorer,
+						$elm$parser$Parser$succeed($author$project$Days$Day19$GreaterThan),
+						$elm$parser$Parser$symbol('>'))
+					]))),
+		A2(
+			$elm$parser$Parser$ignorer,
+			$elm$parser$Parser$int,
+			$elm$parser$Parser$symbol(':'))),
+	A2(
+		$elm$parser$Parser$map,
+		$author$project$Days$Day19$parseWorkflowResult,
+		$author$project$Utils$Parser$string($elm$core$Char$isAlpha)));
+var $elm$core$Result$toMaybe = function (result) {
+	if (result.$ === 'Ok') {
+		var v = result.a;
+		return $elm$core$Maybe$Just(v);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm_community$list_extra$List$Extra$unconsLast = function (list) {
+	var _v0 = $elm$core$List$reverse(list);
+	if (!_v0.b) {
+		return $elm$core$Maybe$Nothing;
+	} else {
+		var last_ = _v0.a;
+		var rest = _v0.b;
+		return $elm$core$Maybe$Just(
+			_Utils_Tuple2(
+				last_,
+				$elm$core$List$reverse(rest)));
+	}
+};
+var $author$project$Days$Day19$parseWorkflows = function () {
+	var parseRule = A2(
+		$elm$core$Basics$composeR,
+		$elm$parser$Parser$run($author$project$Days$Day19$ruleParser),
+		$elm$core$Result$toMaybe);
+	var parseWorkflow = F2(
+		function (line, workflows) {
+			var _v0 = A2(
+				$elm$core$String$split,
+				'{',
+				A2($elm$core$String$dropRight, 1, line));
+			if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
+				var workflowId = _v0.a;
+				var _v1 = _v0.b;
+				var rules = _v1.a;
+				var _v2 = $elm_community$list_extra$List$Extra$unconsLast(
+					A2($elm$core$String$split, ',', rules));
+				if (_v2.$ === 'Just') {
+					var _v3 = _v2.a;
+					var defaultRule = _v3.a;
+					var otherRules = _v3.b;
+					return A3(
+						$elm$core$Dict$insert,
+						workflowId,
+						A2(
+							$author$project$Days$Day19$Workflow,
+							A2($elm$core$List$filterMap, parseRule, otherRules),
+							$author$project$Days$Day19$parseWorkflowResult(defaultRule)),
+						workflows);
+				} else {
+					return workflows;
+				}
+			} else {
+				return workflows;
+			}
+		});
+	return A2(
+		$elm$core$Basics$composeR,
+		$elm$core$String$split('\n'),
+		A2($elm$core$List$foldl, parseWorkflow, $elm$core$Dict$empty));
+}();
+var $author$project$Days$Day19$parsePuzzleModel = function (input) {
+	var _v0 = A2($elm$core$String$split, '\n\n', input);
+	if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
+		var workflows = _v0.a;
+		var _v1 = _v0.b;
+		var parts = _v1.a;
+		return A2(
+			$author$project$Days$Day19$PuzzleModel,
+			$author$project$Days$Day19$parseWorkflows(workflows),
+			$author$project$Days$Day19$parseParts(parts));
+	} else {
+		return A2($author$project$Days$Day19$PuzzleModel, $elm$core$Dict$empty, _List_Nil);
+	}
+};
+var $author$project$Days$Day19$first = function () {
+	var solve = function (_v1) {
+		var workflows = _v1.workflows;
+		var parts = _v1.parts;
+		return $elm$core$Result$Ok(
+			$elm$core$String$fromInt(
+				$elm$core$List$sum(
+					A2(
+						$elm$core$List$map,
+						A2(
+							$elm$core$Dict$foldl,
+							function (_v0) {
+								return $elm$core$Basics$add;
+							},
+							0),
+						A2(
+							$elm$core$List$filter,
+							A2($author$project$Days$Day19$isPartAccepted, workflows, 'in'),
+							parts)))));
+	};
+	return A2($elm$core$Basics$composeR, $author$project$Days$Day19$parsePuzzleModel, solve);
+}();
+var $author$project$Days$Day2$Colors = F3(
+	function (red, green, blue) {
+		return {blue: blue, green: green, red: red};
+	});
+var $author$project$Days$Day2$getMaxRevealedAmounts = function (_v0) {
+	var reveals = _v0.reveals;
+	var revealedColorStep = F2(
+		function (_v2, colors) {
+			var amount = _v2.a;
+			var color = _v2.b;
+			switch (color.$) {
+				case 'Red':
+					return (_Utils_cmp(amount, colors.red) > 0) ? _Utils_update(
+						colors,
+						{red: amount}) : colors;
+				case 'Green':
+					return (_Utils_cmp(amount, colors.green) > 0) ? _Utils_update(
+						colors,
+						{green: amount}) : colors;
+				default:
+					return (_Utils_cmp(amount, colors.blue) > 0) ? _Utils_update(
+						colors,
+						{blue: amount}) : colors;
+			}
+		});
+	var revealStep = F2(
+		function (revealedColors, colors) {
+			return A3($elm$core$List$foldl, revealedColorStep, colors, revealedColors);
+		});
+	return A3(
+		$elm$core$List$foldl,
+		revealStep,
+		A3($author$project$Days$Day2$Colors, 0, 0, 0),
+		reveals);
+};
+var $author$project$Days$Day2$Blue = {$: 'Blue'};
+var $author$project$Days$Day2$Game = F2(
+	function (id, reveals) {
+		return {id: id, reveals: reveals};
+	});
+var $author$project$Days$Day2$Green = {$: 'Green'};
+var $author$project$Days$Day2$Red = {$: 'Red'};
+var $elm$parser$Parser$deadEndsToString = function (deadEnds) {
+	return 'TODO deadEndsToString';
+};
 var $elm$parser$Parser$ExpectingKeyword = function (a) {
 	return {$: 'ExpectingKeyword', a: a};
 };
@@ -12935,6 +13247,431 @@ var $author$project$Days$Day2$first = function (input) {
 			A2($elm$core$Basics$composeR, $elm$core$List$sum, $elm$core$String$fromInt)),
 		$author$project$Days$Day2$parseGames(input));
 };
+var $author$project$Days$Day20$Low = {$: 'Low'};
+var $author$project$Days$Day20$PulseStatePartOne = F4(
+	function (lowPulses, highPulses, pulsesToHandle, modules) {
+		return {highPulses: highPulses, lowPulses: lowPulses, modules: modules, pulsesToHandle: pulsesToHandle};
+	});
+var $author$project$Days$Day20$PulseToHandle = F3(
+	function (sourceModule, pulseType, targetModule) {
+		return {pulseType: pulseType, sourceModule: sourceModule, targetModule: targetModule};
+	});
+var $author$project$Days$Day20$broadcaster = 'broadcaster';
+var $author$project$Days$Day20$Broadcaster = function (a) {
+	return {$: 'Broadcaster', a: a};
+};
+var $author$project$Days$Day20$Conjunction = F2(
+	function (a, b) {
+		return {$: 'Conjunction', a: a, b: b};
+	});
+var $author$project$Days$Day20$FlipFlop = F2(
+	function (a, b) {
+		return {$: 'FlipFlop', a: a, b: b};
+	});
+var $author$project$Days$Day20$parseModules = function (input) {
+	var parseModule = F2(
+		function (line, _v4) {
+			var parsedModules = _v4.a;
+			var parsedInputsForModule = _v4.b;
+			var _v2 = A2($elm$core$String$split, ' -> ', line);
+			if ((_v2.b && _v2.b.b) && (!_v2.b.b.b)) {
+				var moduleIdentifier = _v2.a;
+				var _v3 = _v2.b;
+				var outputsString = _v3.a;
+				var outputs = A2($elm$core$String$split, ', ', outputsString);
+				var addInput = F2(
+					function (inputModuleId, outputModuleId) {
+						return A2(
+							$elm$core$Dict$update,
+							outputModuleId,
+							A2(
+								$elm_community$maybe_extra$Maybe$Extra$unwrap,
+								$elm$core$Maybe$Just(
+									_List_fromArray(
+										[inputModuleId])),
+								A2(
+									$elm$core$Basics$composeR,
+									$elm$core$List$cons(inputModuleId),
+									$elm$core$Maybe$Just)));
+					});
+				var updateState = F2(
+					function (cleanModuleIdentifier, moduleConstructor) {
+						return _Utils_Tuple2(
+							A3(
+								$elm$core$Dict$insert,
+								cleanModuleIdentifier,
+								moduleConstructor(outputs),
+								parsedModules),
+							A3(
+								$elm$core$List$foldl,
+								addInput(cleanModuleIdentifier),
+								parsedInputsForModule,
+								outputs));
+					});
+				return _Utils_eq(moduleIdentifier, $author$project$Days$Day20$broadcaster) ? A2(updateState, $author$project$Days$Day20$broadcaster, $author$project$Days$Day20$Broadcaster) : ((A2($elm$core$String$left, 1, moduleIdentifier) === '%') ? A2(
+					updateState,
+					A2($elm$core$String$dropLeft, 1, moduleIdentifier),
+					$author$project$Days$Day20$FlipFlop(false)) : ((A2($elm$core$String$left, 1, moduleIdentifier) === '&') ? A2(
+					updateState,
+					A2($elm$core$String$dropLeft, 1, moduleIdentifier),
+					$author$project$Days$Day20$Conjunction($elm$core$Dict$empty)) : _Utils_Tuple2(parsedModules, parsedInputsForModule)));
+			} else {
+				return _Utils_Tuple2(parsedModules, parsedInputsForModule);
+			}
+		});
+	var _v0 = A3(
+		$elm$core$List$foldl,
+		parseModule,
+		_Utils_Tuple2($elm$core$Dict$empty, $elm$core$Dict$empty),
+		A2($elm$core$String$split, '\n', input));
+	var modules = _v0.a;
+	var inputsForModule = _v0.b;
+	var getConjunctionDefaultInputs = function (moduleId) {
+		return A3(
+			$elm$core$List$foldl,
+			function (inputModule) {
+				return A2($elm$core$Dict$insert, inputModule, $author$project$Days$Day20$Low);
+			},
+			$elm$core$Dict$empty,
+			A2(
+				$elm$core$Maybe$withDefault,
+				_List_Nil,
+				A2($elm$core$Dict$get, moduleId, inputsForModule)));
+	};
+	var addInputsToConjunction = F2(
+		function (moduleId, module_) {
+			if (module_.$ === 'Conjunction') {
+				var outputs = module_.b;
+				return A2(
+					$author$project$Days$Day20$Conjunction,
+					getConjunctionDefaultInputs(moduleId),
+					outputs);
+			} else {
+				return module_;
+			}
+		});
+	return A2($elm$core$Dict$map, addInputsToConjunction, modules);
+};
+var $author$project$Days$Day20$High = {$: 'High'};
+var $elm_community$dict_extra$Dict$Extra$any = F2(
+	function (predicate, dict) {
+		return A3(
+			$elm$core$Dict$foldl,
+			F3(
+				function (k, v, acc) {
+					return acc ? acc : (A2(predicate, k, v) ? true : false);
+				}),
+			false,
+			dict);
+	});
+var $author$project$Days$Day20$sendPulse = F2(
+	function (_v0, state) {
+		var sourceModule = _v0.sourceModule;
+		var pulseType = _v0.pulseType;
+		var targetModule = _v0.targetModule;
+		var modules = state.modules;
+		var pulsesToHandle = state.pulsesToHandle;
+		var _v1 = A2($elm$core$Dict$get, targetModule, modules);
+		if (_v1.$ === 'Just') {
+			switch (_v1.a.$) {
+				case 'Broadcaster':
+					var outputs = _v1.a.a;
+					return _Utils_update(
+						state,
+						{
+							pulsesToHandle: A2(
+								$elm$core$List$append,
+								pulsesToHandle,
+								A2(
+									$elm$core$List$map,
+									A2($author$project$Days$Day20$PulseToHandle, targetModule, pulseType),
+									outputs))
+						});
+				case 'FlipFlop':
+					var _v2 = _v1.a;
+					var isOn = _v2.a;
+					var outputs = _v2.b;
+					return _Utils_eq(pulseType, $author$project$Days$Day20$High) ? state : _Utils_update(
+						state,
+						{
+							modules: A3(
+								$elm$core$Dict$insert,
+								targetModule,
+								A2($author$project$Days$Day20$FlipFlop, !isOn, outputs),
+								modules),
+							pulsesToHandle: A2(
+								$elm$core$List$append,
+								pulsesToHandle,
+								A2(
+									$elm$core$List$map,
+									A2(
+										$author$project$Days$Day20$PulseToHandle,
+										targetModule,
+										A3($author$project$Utils$Various$iff, isOn, $author$project$Days$Day20$Low, $author$project$Days$Day20$High)),
+									outputs))
+						});
+				default:
+					var _v3 = _v1.a;
+					var inputs = _v3.a;
+					var outputs = _v3.b;
+					var newInputs = A3($elm$core$Dict$insert, sourceModule, pulseType, inputs);
+					var wereAllLastInputsHigh = !A2(
+						$elm_community$dict_extra$Dict$Extra$any,
+						function (_v4) {
+							return $elm$core$Basics$eq($author$project$Days$Day20$Low);
+						},
+						newInputs);
+					return _Utils_update(
+						state,
+						{
+							modules: A3(
+								$elm$core$Dict$insert,
+								targetModule,
+								A2($author$project$Days$Day20$Conjunction, newInputs, outputs),
+								modules),
+							pulsesToHandle: A2(
+								$elm$core$List$append,
+								pulsesToHandle,
+								A2(
+									$elm$core$List$map,
+									A2(
+										$author$project$Days$Day20$PulseToHandle,
+										targetModule,
+										A3($author$project$Utils$Various$iff, wereAllLastInputsHigh, $author$project$Days$Day20$Low, $author$project$Days$Day20$High)),
+									outputs))
+						});
+			}
+		} else {
+			return state;
+		}
+	});
+var $author$project$Days$Day20$first = function () {
+	var incrementLowAndHighPulses = F2(
+		function (_v0, state) {
+			var pulseType = _v0.pulseType;
+			var lowPulses = state.lowPulses;
+			var highPulses = state.highPulses;
+			return _Utils_eq(pulseType, $author$project$Days$Day20$Low) ? _Utils_update(
+				state,
+				{lowPulses: lowPulses + 1}) : _Utils_update(
+				state,
+				{highPulses: highPulses + 1});
+		});
+	var sendAndCountPulses = F2(
+		function (remainingPulses, state) {
+			sendAndCountPulses:
+			while (true) {
+				var pulsesToHandle = state.pulsesToHandle;
+				var lowPulses = state.lowPulses;
+				var highPulses = state.highPulses;
+				if (!$elm$core$List$isEmpty(pulsesToHandle)) {
+					var handlePulse = function (pulseToHandle) {
+						return A2(
+							$elm$core$Basics$composeR,
+							incrementLowAndHighPulses(pulseToHandle),
+							$author$project$Days$Day20$sendPulse(pulseToHandle));
+					};
+					var newState = A3(
+						$elm$core$List$foldl,
+						handlePulse,
+						_Utils_update(
+							state,
+							{pulsesToHandle: _List_Nil}),
+						pulsesToHandle);
+					var $temp$remainingPulses = remainingPulses,
+						$temp$state = newState;
+					remainingPulses = $temp$remainingPulses;
+					state = $temp$state;
+					continue sendAndCountPulses;
+				} else {
+					if (remainingPulses > 0) {
+						var $temp$remainingPulses = remainingPulses - 1,
+							$temp$state = _Utils_update(
+							state,
+							{
+								pulsesToHandle: _List_fromArray(
+									[
+										A3($author$project$Days$Day20$PulseToHandle, 'button', $author$project$Days$Day20$Low, $author$project$Days$Day20$broadcaster)
+									])
+							});
+						remainingPulses = $temp$remainingPulses;
+						state = $temp$state;
+						continue sendAndCountPulses;
+					} else {
+						return lowPulses * highPulses;
+					}
+				}
+			}
+		});
+	return A2(
+		$elm$core$Basics$composeR,
+		$author$project$Days$Day20$parseModules,
+		A2(
+			$elm$core$Basics$composeR,
+			A3($author$project$Days$Day20$PulseStatePartOne, 0, 0, _List_Nil),
+			A2(
+				$elm$core$Basics$composeR,
+				sendAndCountPulses(1000),
+				A2($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$core$Result$Ok))));
+}();
+var $elm$core$Set$foldl = F3(
+	function (func, initialState, _v0) {
+		var dict = _v0.a;
+		return A3(
+			$elm$core$Dict$foldl,
+			F3(
+				function (key, _v1, state) {
+					return A2(func, key, state);
+				}),
+			initialState,
+			dict);
+	});
+var $author$project$Days$Day21$makePuzzleModel = function () {
+	var handleSymbol = F4(
+		function (x, y, symbol, model) {
+			var xBoundary = model.xBoundary;
+			var yBoundary = model.yBoundary;
+			var rocks = model.rocks;
+			var newModel = _Utils_update(
+				model,
+				{
+					xBoundary: A2($elm$core$Basics$max, x, xBoundary),
+					yBoundary: A2($elm$core$Basics$max, y, yBoundary)
+				});
+			switch (symbol.valueOf()) {
+				case '#':
+					return _Utils_update(
+						newModel,
+						{
+							rocks: A2(
+								$elm$core$Set$insert,
+								_Utils_Tuple2(x, y),
+								rocks)
+						});
+				case 'S':
+					return _Utils_update(
+						newModel,
+						{
+							start: _Utils_Tuple2(x, y)
+						});
+				default:
+					return newModel;
+			}
+		});
+	var handleRow = F3(
+		function (y, row, model) {
+			return A3(
+				$elm_community$list_extra$List$Extra$indexedFoldl,
+				F2(
+					function (x, symbol) {
+						return A3(handleSymbol, x, y, symbol);
+					}),
+				model,
+				$elm$core$String$toList(row));
+		});
+	return A2(
+		$elm$core$Basics$composeR,
+		$elm$core$String$split('\n'),
+		A2(
+			$elm_community$list_extra$List$Extra$indexedFoldl,
+			handleRow,
+			{
+				rocks: $elm$core$Set$empty,
+				start: _Utils_Tuple2(0, 0),
+				xBoundary: 0,
+				yBoundary: 0
+			}));
+}();
+var $elm$core$Dict$member = F2(
+	function (key, dict) {
+		var _v0 = A2($elm$core$Dict$get, key, dict);
+		if (_v0.$ === 'Just') {
+			return true;
+		} else {
+			return false;
+		}
+	});
+var $elm$core$Set$member = F2(
+	function (key, _v0) {
+		var dict = _v0.a;
+		return A2($elm$core$Dict$member, key, dict);
+	});
+var $elm$core$Dict$singleton = F2(
+	function (key, value) {
+		return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
+	});
+var $elm$core$Set$singleton = function (key) {
+	return $elm$core$Set$Set_elm_builtin(
+		A2($elm$core$Dict$singleton, key, _Utils_Tuple0));
+};
+var $elm$core$Set$size = function (_v0) {
+	var dict = _v0.a;
+	return $elm$core$Dict$size(dict);
+};
+var $author$project$Days$Day21$first = function (input) {
+	var _v0 = $author$project$Days$Day21$makePuzzleModel(input);
+	var rocks = _v0.rocks;
+	var start = _v0.start;
+	var xBoundary = _v0.xBoundary;
+	var yBoundary = _v0.yBoundary;
+	var isWithinBoundaries = function (_v3) {
+		var x = _v3.a;
+		var y = _v3.b;
+		return (x >= 0) && ((_Utils_cmp(x, xBoundary) < 1) && ((y >= 0) && (_Utils_cmp(y, yBoundary) < 1)));
+	};
+	var addAdjacentPlots = F2(
+		function (_v2, reachedPlots) {
+			var x = _v2.a;
+			var y = _v2.b;
+			return A3(
+				$elm$core$List$foldl,
+				$elm$core$Set$insert,
+				reachedPlots,
+				A2(
+					$elm$core$List$filter,
+					function (position) {
+						return isWithinBoundaries(position) && (!A2($elm$core$Set$member, position, rocks));
+					},
+					_List_fromArray(
+						[
+							_Utils_Tuple2(x - 1, y),
+							_Utils_Tuple2(x + 1, y),
+							_Utils_Tuple2(x, y - 1),
+							_Utils_Tuple2(x, y + 1)
+						])));
+		});
+	var loop = F2(
+		function (remainingSteps, reachedPlots) {
+			loop:
+			while (true) {
+				if (remainingSteps > 0) {
+					var newReachedPlots = A3($elm$core$Set$foldl, addAdjacentPlots, $elm$core$Set$empty, reachedPlots);
+					var _v1 = A2(
+						$elm$core$Debug$log,
+						'',
+						{
+							a_steps: 64 - remainingSteps,
+							b_reachedPlots: $elm$core$Result$Ok(
+								$elm$core$String$fromInt(
+									$elm$core$Set$size(reachedPlots)))
+						});
+					var $temp$remainingSteps = remainingSteps - 1,
+						$temp$reachedPlots = newReachedPlots;
+					remainingSteps = $temp$remainingSteps;
+					reachedPlots = $temp$reachedPlots;
+					continue loop;
+				} else {
+					return $elm$core$Result$Ok(
+						$elm$core$String$fromInt(
+							$elm$core$Set$size(reachedPlots)));
+				}
+			}
+		});
+	return A2(
+		loop,
+		64,
+		$elm$core$Set$singleton(start));
+};
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -12955,10 +13692,6 @@ var $elm$core$List$any = F2(
 				}
 			}
 		}
-	});
-var $author$project$Utils$Various$iff = F3(
-	function (pred, ifTrue, ifFalse) {
-		return pred ? ifTrue : ifFalse;
 	});
 var $elm$core$Maybe$andThen = F2(
 	function (callback, maybeValue) {
@@ -13071,15 +13804,6 @@ var $author$project$Days$Day3$makeMap = function () {
 			return {parts: x.parts, symbols: x.symbols};
 		});
 }();
-var $elm$core$Dict$member = F2(
-	function (key, dict) {
-		var _v0 = A2($elm$core$Dict$get, key, dict);
-		if (_v0.$ === 'Just') {
-			return true;
-		} else {
-			return false;
-		}
-	});
 var $author$project$Days$Day3$first = function (input) {
 	var _v0 = $author$project$Days$Day3$makeMap(input);
 	var parts = _v0.parts;
@@ -13148,10 +13872,6 @@ var $elm$core$Set$intersect = F2(
 		return $elm$core$Set$Set_elm_builtin(
 			A2($elm$core$Dict$intersect, dict1, dict2));
 	});
-var $elm$core$Set$size = function (_v0) {
-	var dict = _v0.a;
-	return $elm$core$Dict$size(dict);
-};
 var $author$project$Days$Day4$getAmountOfWinningNumbers = function (_v0) {
 	var winningNumbers = _v0.winningNumbers;
 	var numbers = _v0.numbers;
@@ -13938,11 +14658,6 @@ var $author$project$Days$Day7$handleWildCards = F2(
 			cardGroups,
 			A2(putWildcardsInBiggestGroup, cardGroups, _List_Nil)) : cardGroups;
 	});
-var $elm$core$Set$member = F2(
-	function (key, _v0) {
-		var dict = _v0.a;
-		return A2($elm$core$Dict$member, key, dict);
-	});
 var $elm$core$List$sortWith = _List_sortWith;
 var $author$project$Days$Day7$sortByDescending = function (toComparable) {
 	var flippedComparison = F2(
@@ -14124,12 +14839,6 @@ var $author$project$Days$Day7$commonHelper = function (shouldHandleWildcards) {
 					$elm$core$String$fromInt))));
 };
 var $author$project$Days$Day7$first = $author$project$Days$Day7$commonHelper(false);
-var $elm_community$list_extra$List$Extra$Continue = function (a) {
-	return {$: 'Continue', a: a};
-};
-var $elm_community$list_extra$List$Extra$Stop = function (a) {
-	return {$: 'Stop', a: a};
-};
 var $author$project$Days$Day8$navigateTree = F3(
 	function (tree, move, node) {
 		var _v0 = _Utils_Tuple2(
@@ -14250,32 +14959,6 @@ var $author$project$Days$Day8$parsePuzzleInput = function () {
 					return 'Parser error, look in the console';
 				})));
 }();
-var $elm_community$list_extra$List$Extra$stoppableFoldl = F3(
-	function (func, acc, list) {
-		stoppableFoldl:
-		while (true) {
-			if (!list.b) {
-				return acc;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				var _v1 = A2(func, x, acc);
-				if (_v1.$ === 'Continue') {
-					var newAcc = _v1.a;
-					var $temp$func = func,
-						$temp$acc = newAcc,
-						$temp$list = xs;
-					func = $temp$func;
-					acc = $temp$acc;
-					list = $temp$list;
-					continue stoppableFoldl;
-				} else {
-					var finalAcc = _v1.a;
-					return finalAcc;
-				}
-			}
-		}
-	});
 var $author$project$Days$Day8$first = function () {
 	var start = 'AAA';
 	var end = 'ZZZ';
@@ -14477,14 +15160,6 @@ var $author$project$Days$Day9$first = A2(
 			$elm$core$Basics$composeR,
 			$elm$core$List$map($author$project$Days$Day9$getNextNumberInSequence),
 			A2($elm$core$Basics$composeR, $elm$core$List$sum, $elm$core$String$fromInt))));
-var $elm$core$Result$toMaybe = function (result) {
-	if (result.$ === 'Ok') {
-		var v = result.a;
-		return $elm$core$Maybe$Just(v);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $author$project$Days$Day1$parseSpelledOutDigit = function (string) {
 	var parser = $elm$parser$Parser$oneOf(
 		A2(
@@ -15232,6 +15907,314 @@ var $author$project$Days$Day15$second = A2(
 				})),
 		$elm$core$Result$map(
 			A2($elm$core$Basics$composeR, $author$project$Days$Day15$calculateFocusingPower, $elm$core$String$fromInt))));
+var $author$project$Days$Day19$calculateAmountOfRealParts = function (part) {
+	var getPossibleValuesForParameter = function (parameter) {
+		return A3(
+			$elm_community$maybe_extra$Maybe$Extra$unwrap,
+			4000,
+			function (condition) {
+				switch (condition.$) {
+					case 'Between':
+						var i = condition.a;
+						var j = condition.b;
+						return (j - i) - 1;
+					case 'LowerThan':
+						var i = condition.a;
+						return i - 1;
+					case 'GreaterThan':
+						var i = condition.a;
+						return 4000 - i;
+					default:
+						return 1;
+				}
+			},
+			A2($elm$core$Dict$get, parameter, part));
+	};
+	return A3(
+		$elm$core$List$foldl,
+		A2($elm$core$Basics$composeR, getPossibleValuesForParameter, $elm$core$Basics$mul),
+		1,
+		_List_fromArray(
+			['x', 'm', 'a', 's']));
+};
+var $elm_community$maybe_extra$Maybe$Extra$filter = F2(
+	function (f, m) {
+		if (m.$ === 'Just') {
+			var a = m.a;
+			return f(a) ? m : $elm$core$Maybe$Nothing;
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Days$Day19$Invalid = {$: 'Invalid'};
+var $author$project$Days$Day19$inverseCondition = function (condition) {
+	switch (condition.$) {
+		case 'LowerThan':
+			var n = condition.a;
+			return $author$project$Days$Day19$GreaterThan(n - 1);
+		case 'GreaterThan':
+			var n = condition.a;
+			return $author$project$Days$Day19$LowerThan(n + 1);
+		default:
+			return $author$project$Days$Day19$Invalid;
+	}
+};
+var $author$project$Days$Day19$isPotentialPartValid = A2(
+	$elm$core$Basics$composeL,
+	$elm$core$Basics$not,
+	$elm_community$dict_extra$Dict$Extra$any(
+		function (_v0) {
+			return $elm$core$Basics$eq($author$project$Days$Day19$Invalid);
+		}));
+var $author$project$Days$Day19$Between = F2(
+	function (a, b) {
+		return {$: 'Between', a: a, b: b};
+	});
+var $author$project$Days$Day19$updatePotentialPartConditions = F2(
+	function (parameter, condition) {
+		var updatePartCondition = function (partCondition) {
+			var _v0 = _Utils_Tuple2(partCondition, condition);
+			_v0$7:
+			while (true) {
+				if (_v0.a.$ === 'Nothing') {
+					var _v1 = _v0.a;
+					return $elm$core$Maybe$Just(condition);
+				} else {
+					switch (_v0.b.$) {
+						case 'LowerThan':
+							switch (_v0.a.a.$) {
+								case 'GreaterThan':
+									var i = _v0.a.a.a;
+									var j = _v0.b.a;
+									return $elm$core$Maybe$Just(
+										A3(
+											$author$project$Utils$Various$iff,
+											_Utils_cmp(i + 1, j) < 0,
+											A2($author$project$Days$Day19$Between, i, j),
+											$author$project$Days$Day19$Invalid));
+								case 'LowerThan':
+									var i = _v0.a.a.a;
+									var j = _v0.b.a;
+									return $elm$core$Maybe$Just(
+										$author$project$Days$Day19$LowerThan(
+											A2($elm$core$Basics$min, i, j)));
+								case 'Between':
+									var _v2 = _v0.a.a;
+									var i = _v2.a;
+									var j = _v2.b;
+									var k = _v0.b.a;
+									return $elm$core$Maybe$Just(
+										A3(
+											$author$project$Utils$Various$iff,
+											_Utils_cmp(k - 1, i) > 0,
+											A2(
+												$author$project$Days$Day19$Between,
+												i,
+												A2($elm$core$Basics$min, j, k)),
+											$author$project$Days$Day19$Invalid));
+								default:
+									break _v0$7;
+							}
+						case 'GreaterThan':
+							switch (_v0.a.a.$) {
+								case 'GreaterThan':
+									var i = _v0.a.a.a;
+									var j = _v0.b.a;
+									return $elm$core$Maybe$Just(
+										$author$project$Days$Day19$GreaterThan(
+											A2($elm$core$Basics$max, i, j)));
+								case 'LowerThan':
+									var i = _v0.a.a.a;
+									var j = _v0.b.a;
+									return $elm$core$Maybe$Just(
+										A3(
+											$author$project$Utils$Various$iff,
+											_Utils_cmp(i - 1, j) > 0,
+											A2($author$project$Days$Day19$Between, j, i),
+											$author$project$Days$Day19$Invalid));
+								case 'Between':
+									var _v3 = _v0.a.a;
+									var i = _v3.a;
+									var j = _v3.b;
+									var k = _v0.b.a;
+									return $elm$core$Maybe$Just(
+										A3(
+											$author$project$Utils$Various$iff,
+											_Utils_cmp(k + 1, j) < 0,
+											A2(
+												$author$project$Days$Day19$Between,
+												A2($elm$core$Basics$max, i, k),
+												j),
+											$author$project$Days$Day19$Invalid));
+								default:
+									break _v0$7;
+							}
+						default:
+							break _v0$7;
+					}
+				}
+			}
+			return $elm$core$Maybe$Just($author$project$Days$Day19$Invalid);
+		};
+		return A2($elm$core$Dict$update, parameter, updatePartCondition);
+	});
+var $author$project$Days$Day19$countAllAcceptableParts = function (workflows) {
+	var handleBothPossibilitiesForRule = F2(
+		function (rule, _v9) {
+			var currentPotentialPart = _v9.a;
+			var possibleParts = _v9.b;
+			var amountOfAcceptedPartsPossible = _v9.c;
+			var testCondition = function (condition) {
+				return A2(
+					$elm_community$maybe_extra$Maybe$Extra$filter,
+					$author$project$Days$Day19$isPotentialPartValid,
+					A2(
+						$elm$core$Maybe$map,
+						A2($author$project$Days$Day19$updatePotentialPartConditions, rule.parameter, condition),
+						currentPotentialPart));
+			};
+			var stopIfCurrentPotentialPartCannotContinue = function (_v8) {
+				var newCurrentPotentialPart = _v8.a;
+				var newPossibleParts = _v8.b;
+				var newAmountOfAcceptedPartsPossible = _v8.c;
+				return _Utils_eq(newCurrentPotentialPart, $elm$core$Maybe$Nothing) ? $elm_community$list_extra$List$Extra$Stop(
+					_Utils_Tuple3(newCurrentPotentialPart, newPossibleParts, newAmountOfAcceptedPartsPossible)) : $elm_community$list_extra$List$Extra$Continue(
+					_Utils_Tuple3(newCurrentPotentialPart, newPossibleParts, newAmountOfAcceptedPartsPossible));
+			};
+			var partThatDoesNotFullfillRule = testCondition(
+				$author$project$Days$Day19$inverseCondition(rule.condition));
+			var partThatDoesFullfillRule = testCondition(rule.condition);
+			var _v7 = rule.result;
+			switch (_v7.$) {
+				case 'Refused':
+					return stopIfCurrentPotentialPartCannotContinue(
+						_Utils_Tuple3(partThatDoesNotFullfillRule, possibleParts, amountOfAcceptedPartsPossible));
+				case 'Accepted':
+					return stopIfCurrentPotentialPartCannotContinue(
+						_Utils_Tuple3(
+							partThatDoesNotFullfillRule,
+							possibleParts,
+							A3(
+								$elm_community$maybe_extra$Maybe$Extra$unwrap,
+								amountOfAcceptedPartsPossible,
+								function (part) {
+									return amountOfAcceptedPartsPossible + $author$project$Days$Day19$calculateAmountOfRealParts(part);
+								},
+								partThatDoesFullfillRule)));
+				default:
+					var newWorkflow = _v7.a;
+					return stopIfCurrentPotentialPartCannotContinue(
+						_Utils_Tuple3(
+							partThatDoesNotFullfillRule,
+							A3(
+								$elm_community$maybe_extra$Maybe$Extra$unwrap,
+								possibleParts,
+								function (part) {
+									return A2(
+										$elm$core$List$cons,
+										_Utils_Tuple2(newWorkflow, part),
+										possibleParts);
+								},
+								partThatDoesFullfillRule),
+							amountOfAcceptedPartsPossible));
+			}
+		});
+	var handleAllPosibilitiesForNextWorkflow = F2(
+		function (_v5, _v6) {
+			var nextWorkflow = _v5.a;
+			var part = _v5.b;
+			var possibleParts = _v6.a;
+			var amountOfAcceptedPartsPossible = _v6.b;
+			return A3(
+				$elm_community$maybe_extra$Maybe$Extra$unwrap,
+				_Utils_Tuple2(possibleParts, amountOfAcceptedPartsPossible),
+				function (_v1) {
+					var rules = _v1.rules;
+					var defaultResult = _v1.defaultResult;
+					var _v2 = A3(
+						$elm_community$list_extra$List$Extra$stoppableFoldl,
+						handleBothPossibilitiesForRule,
+						_Utils_Tuple3(
+							$elm$core$Maybe$Just(part),
+							possibleParts,
+							amountOfAcceptedPartsPossible),
+						rules);
+					var maybeNewPart = _v2.a;
+					var newPossibleParts = _v2.b;
+					var newAmountOfAcceptedPartsPossible = _v2.c;
+					var _v3 = _Utils_Tuple2(maybeNewPart, defaultResult);
+					_v3$2:
+					while (true) {
+						if (_v3.a.$ === 'Just') {
+							switch (_v3.b.$) {
+								case 'Accepted':
+									var newPart = _v3.a.a;
+									var _v4 = _v3.b;
+									return _Utils_Tuple2(
+										newPossibleParts,
+										newAmountOfAcceptedPartsPossible + $author$project$Days$Day19$calculateAmountOfRealParts(newPart));
+								case 'GoTo':
+									var newPart = _v3.a.a;
+									var newWorkflow = _v3.b.a;
+									return _Utils_Tuple2(
+										A2(
+											$elm$core$List$cons,
+											_Utils_Tuple2(newWorkflow, newPart),
+											newPossibleParts),
+										newAmountOfAcceptedPartsPossible);
+								default:
+									break _v3$2;
+							}
+						} else {
+							break _v3$2;
+						}
+					}
+					return _Utils_Tuple2(newPossibleParts, newAmountOfAcceptedPartsPossible);
+				},
+				A2($elm$core$Dict$get, nextWorkflow, workflows));
+		});
+	var recursiveHelper = F2(
+		function (possibleParts, amountOfAcceptedPartsPossible) {
+			recursiveHelper:
+			while (true) {
+				if (!$elm$core$List$isEmpty(possibleParts)) {
+					var _v0 = A3(
+						$elm$core$List$foldl,
+						handleAllPosibilitiesForNextWorkflow,
+						_Utils_Tuple2(_List_Nil, amountOfAcceptedPartsPossible),
+						possibleParts);
+					var newPossibleParts = _v0.a;
+					var newAmountOfAcceptedPartsPossible = _v0.b;
+					var $temp$possibleParts = newPossibleParts,
+						$temp$amountOfAcceptedPartsPossible = newAmountOfAcceptedPartsPossible;
+					possibleParts = $temp$possibleParts;
+					amountOfAcceptedPartsPossible = $temp$amountOfAcceptedPartsPossible;
+					continue recursiveHelper;
+				} else {
+					return amountOfAcceptedPartsPossible;
+				}
+			}
+		});
+	return A2(
+		recursiveHelper,
+		_List_fromArray(
+			[
+				_Utils_Tuple2('in', $elm$core$Dict$empty)
+			]),
+		0);
+};
+var $author$project$Days$Day19$second = A2(
+	$elm$core$Basics$composeR,
+	$author$project$Days$Day19$parsePuzzleModel,
+	A2(
+		$elm$core$Basics$composeR,
+		function ($) {
+			return $.workflows;
+		},
+		A2(
+			$elm$core$Basics$composeR,
+			$author$project$Days$Day19$countAllAcceptableParts,
+			A2($elm$core$Basics$composeR, $elm$core$String$fromInt, $elm$core$Result$Ok))));
 var $author$project$Days$Day2$getPower = function (colors) {
 	return (colors.red * colors.green) * colors.blue;
 };
@@ -15244,6 +16227,234 @@ var $author$project$Days$Day2$second = function (input) {
 				A2($elm$core$Basics$composeR, $author$project$Days$Day2$getMaxRevealedAmounts, $author$project$Days$Day2$getPower)),
 			A2($elm$core$Basics$composeR, $elm$core$List$sum, $elm$core$String$fromInt)),
 		$author$project$Days$Day2$parseGames(input));
+};
+var $author$project$Days$Day20$PulseStatePartTwo = F3(
+	function (pulsesToHandle, monitoredPulseCycles, modules) {
+		return {modules: modules, monitoredPulseCycles: monitoredPulseCycles, pulsesToHandle: pulsesToHandle};
+	});
+var $elm_community$dict_extra$Dict$Extra$find = F2(
+	function (predicate, dict) {
+		return A3(
+			$elm$core$Dict$foldl,
+			F3(
+				function (k, v, acc) {
+					if (acc.$ === 'Just') {
+						return acc;
+					} else {
+						return A2(predicate, k, v) ? $elm$core$Maybe$Just(
+							_Utils_Tuple2(k, v)) : $elm$core$Maybe$Nothing;
+					}
+				}),
+			$elm$core$Maybe$Nothing,
+			dict);
+	});
+var $author$project$Days$Day20$getConjunctionInputs = F2(
+	function (modules, moduleId) {
+		var _v0 = A2($elm$core$Dict$get, moduleId, modules);
+		if ((_v0.$ === 'Just') && (_v0.a.$ === 'Conjunction')) {
+			var _v1 = _v0.a;
+			var inputs = _v1.a;
+			return $elm$core$Dict$keys(inputs);
+		} else {
+			return _List_Nil;
+		}
+	});
+var $author$project$Days$Day20$getOutputs = function (module_) {
+	switch (module_.$) {
+		case 'Broadcaster':
+			var outputs = module_.a;
+			return outputs;
+		case 'FlipFlop':
+			var outputs = module_.b;
+			return outputs;
+		default:
+			var outputs = module_.b;
+			return outputs;
+	}
+};
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var $author$project$Days$Day20$hasOutput = function (moduleId) {
+	return A2(
+		$elm$core$Basics$composeR,
+		$author$project$Days$Day20$getOutputs,
+		$elm$core$List$member(moduleId));
+};
+var $author$project$Days$Day20$rx = 'rx';
+var $author$project$Days$Day20$getInitialMonitoredPulseCycles = function (modules) {
+	return A3(
+		$elm$core$List$foldl,
+		function (monitoredModuleId) {
+			return A2($elm$core$Dict$insert, monitoredModuleId, $elm$core$Maybe$Nothing);
+		},
+		$elm$core$Dict$empty,
+		A2(
+			$elm$core$Maybe$withDefault,
+			_List_Nil,
+			A2(
+				$elm$core$Maybe$map,
+				A2(
+					$elm$core$Basics$composeR,
+					$elm$core$Tuple$first,
+					$author$project$Days$Day20$getConjunctionInputs(modules)),
+				A2(
+					$elm_community$dict_extra$Dict$Extra$find,
+					function (_v0) {
+						return $author$project$Days$Day20$hasOutput($author$project$Days$Day20$rx);
+					},
+					modules))));
+};
+var $author$project$Days$Day20$second = function (input) {
+	var parsedModules = $author$project$Days$Day20$parseModules(input);
+	var monitorPulse = F3(
+		function (buttonPresses, _v2, state) {
+			var sourceModule = _v2.sourceModule;
+			var pulseType = _v2.pulseType;
+			var monitoredPulseCycles = state.monitoredPulseCycles;
+			return _Utils_eq(pulseType, $author$project$Days$Day20$High) ? _Utils_update(
+				state,
+				{
+					monitoredPulseCycles: A3(
+						$elm$core$Dict$update,
+						sourceModule,
+						$elm$core$Maybe$map(
+							$elm_community$maybe_extra$Maybe$Extra$orElse(
+								$elm$core$Maybe$Just(buttonPresses))),
+						monitoredPulseCycles)
+				}) : state;
+		});
+	var countButtonPressesUntilLowPulseIsSentToRx = F2(
+		function (buttonPresses, state) {
+			countButtonPressesUntilLowPulseIsSentToRx:
+			while (true) {
+				var pulsesToHandle = state.pulsesToHandle;
+				var monitoredPulseCycles = state.monitoredPulseCycles;
+				if (!$elm$core$List$isEmpty(pulsesToHandle)) {
+					var handlePulse = function (pulseToHandle) {
+						return A2(
+							$elm$core$Basics$composeR,
+							A2(monitorPulse, buttonPresses, pulseToHandle),
+							$author$project$Days$Day20$sendPulse(pulseToHandle));
+					};
+					var newState = A3(
+						$elm$core$List$foldl,
+						handlePulse,
+						_Utils_update(
+							state,
+							{pulsesToHandle: _List_Nil}),
+						pulsesToHandle);
+					var $temp$buttonPresses = buttonPresses,
+						$temp$state = newState;
+					buttonPresses = $temp$buttonPresses;
+					state = $temp$state;
+					continue countButtonPressesUntilLowPulseIsSentToRx;
+				} else {
+					if (A2(
+						$elm_community$dict_extra$Dict$Extra$any,
+						function (_v0) {
+							return $elm$core$Basics$eq($elm$core$Maybe$Nothing);
+						},
+						monitoredPulseCycles)) {
+						var $temp$buttonPresses = buttonPresses + 1,
+							$temp$state = _Utils_update(
+							state,
+							{
+								pulsesToHandle: _List_fromArray(
+									[
+										A3($author$project$Days$Day20$PulseToHandle, 'button', $author$project$Days$Day20$Low, $author$project$Days$Day20$broadcaster)
+									])
+							});
+						buttonPresses = $temp$buttonPresses;
+						state = $temp$state;
+						continue countButtonPressesUntilLowPulseIsSentToRx;
+					} else {
+						return A3(
+							$elm$core$Dict$foldl,
+							function (_v1) {
+								return A2(
+									$elm$core$Basics$composeR,
+									$elm$core$Maybe$withDefault(1),
+									$elm$core$Basics$mul);
+							},
+							1,
+							monitoredPulseCycles);
+					}
+				}
+			}
+		});
+	return $elm$core$Result$Ok(
+		$elm$core$String$fromInt(
+			A2(
+				countButtonPressesUntilLowPulseIsSentToRx,
+				0,
+				A3(
+					$author$project$Days$Day20$PulseStatePartTwo,
+					_List_Nil,
+					$author$project$Days$Day20$getInitialMonitoredPulseCycles(parsedModules),
+					parsedModules))));
+};
+var $author$project$Days$Day21$second = function (input) {
+	var _v0 = $author$project$Days$Day21$makePuzzleModel(input);
+	var rocks = _v0.rocks;
+	var start = _v0.start;
+	var xBoundary = _v0.xBoundary;
+	var yBoundary = _v0.yBoundary;
+	var addAdjacentPlots = F2(
+		function (_v1, reachedPlots) {
+			var x = _v1.a;
+			var y = _v1.b;
+			return A3(
+				$elm$core$List$foldl,
+				$elm$core$Set$insert,
+				reachedPlots,
+				A2(
+					$elm$core$List$filter,
+					A2(
+						$elm$core$Basics$composeR,
+						A2(
+							$elm$core$Tuple$mapBoth,
+							$elm$core$Basics$modBy(xBoundary),
+							$elm$core$Basics$modBy(yBoundary)),
+						function (position) {
+							return !A2($elm$core$Set$member, position, rocks);
+						}),
+					_List_fromArray(
+						[
+							_Utils_Tuple2(x - 1, y),
+							_Utils_Tuple2(x + 1, y),
+							_Utils_Tuple2(x, y - 1),
+							_Utils_Tuple2(x, y + 1)
+						])));
+		});
+	var loop = F2(
+		function (remainingSteps, reachedPlots) {
+			loop:
+			while (true) {
+				if (remainingSteps > 0) {
+					var newReachedPlots = A3($elm$core$Set$foldl, addAdjacentPlots, $elm$core$Set$empty, reachedPlots);
+					var $temp$remainingSteps = remainingSteps - 1,
+						$temp$reachedPlots = newReachedPlots;
+					remainingSteps = $temp$remainingSteps;
+					reachedPlots = $temp$reachedPlots;
+					continue loop;
+				} else {
+					return $elm$core$Result$Ok(
+						$elm$core$String$fromInt(
+							$elm$core$Set$size(reachedPlots)));
+				}
+			}
+		});
+	return A2(
+		loop,
+		64,
+		$elm$core$Set$singleton(start));
 };
 var $author$project$Days$Day3$second = function (input) {
 	var sumAllGearRatios = F3(
@@ -15766,7 +16977,13 @@ var $author$project$Main$puzzles = _List_fromArray(
 		{identifier: 'day14-1', label: 'Day 14', solution: $author$project$Days$Day14$first},
 		{identifier: 'day14-2', label: 'Day 14 (Part Two)', solution: $author$project$Days$Day14$second},
 		{identifier: 'day15-1', label: 'Day 15', solution: $author$project$Days$Day15$first},
-		{identifier: 'day15-2', label: 'Day 15 (Part Two)', solution: $author$project$Days$Day15$second}
+		{identifier: 'day15-2', label: 'Day 15 (Part Two)', solution: $author$project$Days$Day15$second},
+		{identifier: 'day19-1', label: 'Day 19', solution: $author$project$Days$Day19$first},
+		{identifier: 'day19-2', label: 'Day 19 (Part Two)', solution: $author$project$Days$Day19$second},
+		{identifier: 'day20-1', label: 'Day 20', solution: $author$project$Days$Day20$first},
+		{identifier: 'day20-2', label: 'Day 20 (Part Two)', solution: $author$project$Days$Day20$second},
+		{identifier: 'day21-1', label: 'Day 21', solution: $author$project$Days$Day21$first},
+		{identifier: 'day21-2', label: 'Day 21 (Part Two)', solution: $author$project$Days$Day21$second}
 	]);
 var $author$project$Main$init = _Utils_Tuple2(
 	A3(
