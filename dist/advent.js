@@ -13526,17 +13526,116 @@ var $elm$core$Set$foldl = F3(
 			initialState,
 			dict);
 	});
+var $author$project$Utils$Various$isZero = function (n) {
+	return _Utils_eq(n, n - n);
+};
+var $author$project$Utils$NumberSequenceSolver$getDecomposedSequence = function (sequence) {
+	var getAllDifferences = F2(
+		function (x, _v3) {
+			var lastNumber = _v3.a;
+			var calculatedDifferences = _v3.b;
+			return _Utils_Tuple2(
+				$elm$core$Maybe$Just(x),
+				A3(
+					$elm_community$maybe_extra$Maybe$Extra$unwrap,
+					calculatedDifferences,
+					function (y) {
+						return A2($elm$core$List$cons, x - y, calculatedDifferences);
+					},
+					lastNumber));
+		});
+	var extractValueIfAllNumbersAreTheSame = A2(
+		$elm_community$list_extra$List$Extra$stoppableFoldl,
+		function (n) {
+			return A2(
+				$elm_community$maybe_extra$Maybe$Extra$unwrap,
+				$elm_community$list_extra$List$Extra$Continue(
+					$elm$core$Maybe$Just(n)),
+				function (i) {
+					return A3(
+						$author$project$Utils$Various$iff,
+						_Utils_eq(i, n),
+						$elm_community$list_extra$List$Extra$Continue(
+							$elm$core$Maybe$Just(n)),
+						$elm_community$list_extra$List$Extra$Stop($elm$core$Maybe$Nothing));
+				});
+		},
+		$elm$core$Maybe$Nothing);
+	var recursiveHelper = F2(
+		function (cont, reversedSequence) {
+			var differences = A3(
+				$elm$core$List$foldr,
+				getAllDifferences,
+				_Utils_Tuple2($elm$core$Maybe$Nothing, _List_Nil),
+				reversedSequence).b;
+			var _v0 = _Utils_Tuple2(
+				A3(
+					$elm_community$maybe_extra$Maybe$Extra$unwrap,
+					false,
+					$author$project$Utils$Various$isZero,
+					extractValueIfAllNumbersAreTheSame(differences)),
+				differences);
+			if (_v0.a) {
+				return cont(_List_Nil);
+			} else {
+				if (_v0.b.b) {
+					var _v1 = _v0.b;
+					var x = _v1.a;
+					return A2(
+						recursiveHelper,
+						function (decomposedSequence) {
+							return cont(
+								A2($elm$core$List$cons, x, decomposedSequence));
+						},
+						differences);
+				} else {
+					return $elm$core$Maybe$Nothing;
+				}
+			}
+		});
+	var _v2 = $elm$core$List$reverse(sequence);
+	if (_v2.b) {
+		var reversedSequence = _v2;
+		var x = reversedSequence.a;
+		return A2(
+			recursiveHelper,
+			function (decomposedSequence) {
+				return $elm$core$Maybe$Just(
+					$elm$core$List$reverse(
+						A2($elm$core$List$cons, x, decomposedSequence)));
+			},
+			reversedSequence);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm_community$list_extra$List$Extra$last = function (items) {
+	last:
+	while (true) {
+		if (!items.b) {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			if (!items.b.b) {
+				var x = items.a;
+				return $elm$core$Maybe$Just(x);
+			} else {
+				var rest = items.b;
+				var $temp$items = rest;
+				items = $temp$items;
+				continue last;
+			}
+		}
+	}
+};
 var $author$project$Days$Day21$makePuzzleModel = function () {
 	var handleSymbol = F4(
 		function (x, y, symbol, model) {
-			var xBoundary = model.xBoundary;
-			var yBoundary = model.yBoundary;
+			var mapSize = model.mapSize;
 			var rocks = model.rocks;
 			var newModel = _Utils_update(
 				model,
 				{
-					xBoundary: A2($elm$core$Basics$max, x, xBoundary),
-					yBoundary: A2($elm$core$Basics$max, y, yBoundary)
+					mapSize: A2($elm$core$Basics$max, x + 1, mapSize)
 				});
 			switch (symbol.valueOf()) {
 				case '#':
@@ -13576,10 +13675,9 @@ var $author$project$Days$Day21$makePuzzleModel = function () {
 			$elm_community$list_extra$List$Extra$indexedFoldl,
 			handleRow,
 			{
+				mapSize: 0,
 				rocks: $elm$core$Set$empty,
-				start: _Utils_Tuple2(0, 0),
-				xBoundary: 0,
-				yBoundary: 0
+				start: _Utils_Tuple2(0, 0)
 			}));
 }();
 var $elm$core$Dict$member = F2(
@@ -13596,6 +13694,38 @@ var $elm$core$Set$member = F2(
 		var dict = _v0.a;
 		return A2($elm$core$Dict$member, key, dict);
 	});
+var $elm_community$list_extra$List$Extra$scanl = F3(
+	function (f, b, xs) {
+		var scan1 = F2(
+			function (x, accAcc) {
+				if (accAcc.b) {
+					var acc = accAcc.a;
+					return A2(
+						$elm$core$List$cons,
+						A2(f, x, acc),
+						accAcc);
+				} else {
+					return _List_Nil;
+				}
+			});
+		return $elm$core$List$reverse(
+			A3(
+				$elm$core$List$foldl,
+				scan1,
+				_List_fromArray(
+					[b]),
+				xs));
+	});
+var $elm_community$list_extra$List$Extra$scanl1 = F2(
+	function (f, xs_) {
+		if (!xs_.b) {
+			return _List_Nil;
+		} else {
+			var x = xs_.a;
+			var xs = xs_.b;
+			return A3($elm_community$list_extra$List$Extra$scanl, f, x, xs);
+		}
+	});
 var $elm$core$Dict$singleton = F2(
 	function (key, value) {
 		return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
@@ -13608,69 +13738,115 @@ var $elm$core$Set$size = function (_v0) {
 	var dict = _v0.a;
 	return $elm$core$Dict$size(dict);
 };
-var $author$project$Days$Day21$first = function (input) {
-	var _v0 = $author$project$Days$Day21$makePuzzleModel(input);
-	var rocks = _v0.rocks;
-	var start = _v0.start;
-	var xBoundary = _v0.xBoundary;
-	var yBoundary = _v0.yBoundary;
-	var isWithinBoundaries = function (_v3) {
-		var x = _v3.a;
-		var y = _v3.b;
-		return (x >= 0) && ((_Utils_cmp(x, xBoundary) < 1) && ((y >= 0) && (_Utils_cmp(y, yBoundary) < 1)));
-	};
-	var addAdjacentPlots = F2(
-		function (_v2, reachedPlots) {
-			var x = _v2.a;
-			var y = _v2.b;
-			return A3(
-				$elm$core$List$foldl,
-				$elm$core$Set$insert,
-				reachedPlots,
-				A2(
-					$elm$core$List$filter,
-					function (position) {
-						return isWithinBoundaries(position) && (!A2($elm$core$Set$member, position, rocks));
-					},
-					_List_fromArray(
-						[
-							_Utils_Tuple2(x - 1, y),
-							_Utils_Tuple2(x + 1, y),
-							_Utils_Tuple2(x, y - 1),
-							_Utils_Tuple2(x, y + 1)
-						])));
-		});
-	var loop = F2(
-		function (remainingSteps, reachedPlots) {
-			loop:
-			while (true) {
-				if (remainingSteps > 0) {
-					var newReachedPlots = A3($elm$core$Set$foldl, addAdjacentPlots, $elm$core$Set$empty, reachedPlots);
-					var _v1 = A2(
-						$elm$core$Debug$log,
-						'',
-						{
-							a_steps: 64 - remainingSteps,
-							b_reachedPlots: $elm$core$Result$Ok(
-								$elm$core$String$fromInt(
-									$elm$core$Set$size(reachedPlots)))
-						});
-					var $temp$remainingSteps = remainingSteps - 1,
-						$temp$reachedPlots = newReachedPlots;
-					remainingSteps = $temp$remainingSteps;
-					reachedPlots = $temp$reachedPlots;
-					continue loop;
-				} else {
-					return $elm$core$Result$Ok(
-						$elm$core$String$fromInt(
-							$elm$core$Set$size(reachedPlots)));
+var $author$project$Days$Day21$helper = F2(
+	function (maxSteps, input) {
+		var findNextNumber = F2(
+			function (i, decomposedSequence) {
+				findNextNumber:
+				while (true) {
+					if (!i) {
+						return $elm$core$Result$Ok(
+							A3(
+								$elm_community$maybe_extra$Maybe$Extra$unwrap,
+								'0',
+								$elm$core$String$fromInt,
+								$elm_community$list_extra$List$Extra$last(decomposedSequence)));
+					} else {
+						var $temp$i = i - 1,
+							$temp$decomposedSequence = A2($elm_community$list_extra$List$Extra$scanl1, $elm$core$Basics$add, decomposedSequence);
+						i = $temp$i;
+						decomposedSequence = $temp$decomposedSequence;
+						continue findNextNumber;
+					}
 				}
-			}
-		});
-	return A2(
-		loop,
-		64,
-		$elm$core$Set$singleton(start));
+			});
+		var _v0 = $author$project$Days$Day21$makePuzzleModel(input);
+		var rocks = _v0.rocks;
+		var start = _v0.start;
+		var mapSize = _v0.mapSize;
+		var halfOfMapSize = (mapSize / 2) | 0;
+		var remapPosition = A2(
+			$elm$core$Tuple$mapBoth,
+			$elm$core$Basics$modBy(mapSize),
+			$elm$core$Basics$modBy(mapSize));
+		var addAdjacentPlots = F2(
+			function (_v3, reachedPlots) {
+				var x = _v3.a;
+				var y = _v3.b;
+				return A3(
+					$elm$core$List$foldl,
+					$elm$core$Set$insert,
+					reachedPlots,
+					A2(
+						$elm$core$List$filter,
+						A2(
+							$elm$core$Basics$composeR,
+							remapPosition,
+							function (position) {
+								return !A2($elm$core$Set$member, position, rocks);
+							}),
+						_List_fromArray(
+							[
+								_Utils_Tuple2(x - 1, y),
+								_Utils_Tuple2(x + 1, y),
+								_Utils_Tuple2(x, y - 1),
+								_Utils_Tuple2(x, y + 1)
+							])));
+			});
+		var loop = F3(
+			function (steps, reachedPlots, sequence) {
+				loop:
+				while (true) {
+					if (_Utils_cmp(steps, maxSteps) < 1) {
+						var newReachedPlots = A3($elm$core$Set$foldl, addAdjacentPlots, $elm$core$Set$empty, reachedPlots);
+						if (_Utils_eq(steps, halfOfMapSize) || (!A2($elm$core$Basics$modBy, mapSize, steps - halfOfMapSize))) {
+							var newSequence = _Utils_ap(
+								sequence,
+								_List_fromArray(
+									[
+										$elm$core$Set$size(newReachedPlots)
+									]));
+							var _v1 = A2(
+								$elm$core$Debug$log,
+								'',
+								{a_steps: steps, b_sequence: newSequence});
+							var _v2 = $author$project$Utils$NumberSequenceSolver$getDecomposedSequence(newSequence);
+							if (_v2.$ === 'Just') {
+								var decomposedSequence = _v2.a;
+								return A2(findNextNumber, ((maxSteps - steps) / mapSize) | 0, decomposedSequence);
+							} else {
+								var $temp$steps = steps + 1,
+									$temp$reachedPlots = newReachedPlots,
+									$temp$sequence = newSequence;
+								steps = $temp$steps;
+								reachedPlots = $temp$reachedPlots;
+								sequence = $temp$sequence;
+								continue loop;
+							}
+						} else {
+							var $temp$steps = steps + 1,
+								$temp$reachedPlots = newReachedPlots,
+								$temp$sequence = sequence;
+							steps = $temp$steps;
+							reachedPlots = $temp$reachedPlots;
+							sequence = $temp$sequence;
+							continue loop;
+						}
+					} else {
+						return $elm$core$Result$Ok(
+							$elm$core$String$fromInt(
+								$elm$core$Set$size(reachedPlots)));
+					}
+				}
+			});
+		return A3(
+			loop,
+			1,
+			$elm$core$Set$singleton(start),
+			_List_Nil);
+	});
+var $author$project$Days$Day21$first = function (input) {
+	return A2($author$project$Days$Day21$helper, 64, input);
 };
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
@@ -15009,66 +15185,10 @@ var $author$project$Days$Day8$first = function () {
 			loop(
 				{done: false, node: start, steps: 0})));
 }();
-var $author$project$Days$Day9$getNextNumberInSequence = function (sequence) {
-	var getAllDifferences = F2(
-		function (x, _v4) {
-			var lastNumber = _v4.a;
-			var differences = _v4.b;
-			return _Utils_Tuple2(
-				$elm$core$Maybe$Just(x),
-				A3(
-					$elm_community$maybe_extra$Maybe$Extra$unwrap,
-					differences,
-					function (y) {
-						return A2($elm$core$List$cons, x - y, differences);
-					},
-					lastNumber));
-		});
-	var getDifferencesInSequence = A2(
-		$elm$core$Basics$composeR,
-		A2(
-			$elm$core$List$foldr,
-			getAllDifferences,
-			_Utils_Tuple2($elm$core$Maybe$Nothing, _List_Nil)),
-		$elm$core$Tuple$second);
-	var recursiveHelper = F2(
-		function (continuation, sequence_) {
-			var differences = getDifferencesInSequence(sequence_);
-			var _v0 = _Utils_Tuple2(
-				$elm$core$Set$toList(
-					$elm$core$Set$fromList(differences)),
-				differences);
-			if (_v0.a.b && (!_v0.a.b.b)) {
-				var _v1 = _v0.a;
-				var x = _v1.a;
-				return continuation(x);
-			} else {
-				if (_v0.b.b) {
-					var _v2 = _v0.b;
-					var x = _v2.a;
-					return A2(
-						recursiveHelper,
-						function (y) {
-							return continuation(x + y);
-						},
-						differences);
-				} else {
-					return 0;
-				}
-			}
-		});
-	if (sequence.b) {
-		var x = sequence.a;
-		return A2(
-			recursiveHelper,
-			function (y) {
-				return x + y;
-			},
-			sequence);
-	} else {
-		return 0;
-	}
-};
+var $author$project$Days$Day9$calculateNextNumberHelper = A2(
+	$elm$core$Basics$composeR,
+	$author$project$Utils$NumberSequenceSolver$getDecomposedSequence,
+	A2($elm_community$maybe_extra$Maybe$Extra$unwrap, 0, $elm$core$List$sum));
 var $author$project$Days$Day9$potentiallyNegativeIntParser = $elm$parser$Parser$oneOf(
 	_List_fromArray(
 		[
@@ -15107,12 +15227,18 @@ var $author$project$Days$Day9$sequenceParser = A2(
 						$elm$parser$Parser$succeed(
 							function (number) {
 								return $elm$parser$Parser$Done(
-									A2($elm$core$List$cons, number, numbers));
+									$elm$core$List$reverse(
+										A2($elm$core$List$cons, number, numbers)));
 							}),
 						A2(
 							$elm$parser$Parser$ignorer,
 							$author$project$Days$Day9$potentiallyNegativeIntParser,
-							$elm$parser$Parser$symbol('\n'))))
+							$elm$parser$Parser$oneOf(
+								_List_fromArray(
+									[
+										$elm$parser$Parser$symbol('\n'),
+										$elm$parser$Parser$end
+									])))))
 				]));
 	});
 var $author$project$Days$Day9$parseSequences = function () {
@@ -15158,7 +15284,7 @@ var $author$project$Days$Day9$first = A2(
 	$elm$core$Result$map(
 		A2(
 			$elm$core$Basics$composeR,
-			$elm$core$List$map($author$project$Days$Day9$getNextNumberInSequence),
+			$elm$core$List$map($author$project$Days$Day9$calculateNextNumberHelper),
 			A2($elm$core$Basics$composeR, $elm$core$List$sum, $elm$core$String$fromInt))));
 var $author$project$Days$Day1$parseSpelledOutDigit = function (string) {
 	var parser = $elm$parser$Parser$oneOf(
@@ -16401,60 +16527,7 @@ var $author$project$Days$Day20$second = function (input) {
 					parsedModules))));
 };
 var $author$project$Days$Day21$second = function (input) {
-	var _v0 = $author$project$Days$Day21$makePuzzleModel(input);
-	var rocks = _v0.rocks;
-	var start = _v0.start;
-	var xBoundary = _v0.xBoundary;
-	var yBoundary = _v0.yBoundary;
-	var addAdjacentPlots = F2(
-		function (_v1, reachedPlots) {
-			var x = _v1.a;
-			var y = _v1.b;
-			return A3(
-				$elm$core$List$foldl,
-				$elm$core$Set$insert,
-				reachedPlots,
-				A2(
-					$elm$core$List$filter,
-					A2(
-						$elm$core$Basics$composeR,
-						A2(
-							$elm$core$Tuple$mapBoth,
-							$elm$core$Basics$modBy(xBoundary),
-							$elm$core$Basics$modBy(yBoundary)),
-						function (position) {
-							return !A2($elm$core$Set$member, position, rocks);
-						}),
-					_List_fromArray(
-						[
-							_Utils_Tuple2(x - 1, y),
-							_Utils_Tuple2(x + 1, y),
-							_Utils_Tuple2(x, y - 1),
-							_Utils_Tuple2(x, y + 1)
-						])));
-		});
-	var loop = F2(
-		function (remainingSteps, reachedPlots) {
-			loop:
-			while (true) {
-				if (remainingSteps > 0) {
-					var newReachedPlots = A3($elm$core$Set$foldl, addAdjacentPlots, $elm$core$Set$empty, reachedPlots);
-					var $temp$remainingSteps = remainingSteps - 1,
-						$temp$reachedPlots = newReachedPlots;
-					remainingSteps = $temp$remainingSteps;
-					reachedPlots = $temp$reachedPlots;
-					continue loop;
-				} else {
-					return $elm$core$Result$Ok(
-						$elm$core$String$fromInt(
-							$elm$core$Set$size(reachedPlots)));
-				}
-			}
-		});
-	return A2(
-		loop,
-		64,
-		$elm$core$Set$singleton(start));
+	return A2($author$project$Days$Day21$helper, 26501365, input);
 };
 var $author$project$Days$Day3$second = function (input) {
 	var sumAllGearRatios = F3(
@@ -16945,7 +17018,7 @@ var $author$project$Days$Day9$second = A2(
 		A2(
 			$elm$core$Basics$composeR,
 			$elm$core$List$map(
-				A2($elm$core$Basics$composeR, $elm$core$List$reverse, $author$project$Days$Day9$getNextNumberInSequence)),
+				A2($elm$core$Basics$composeR, $elm$core$List$reverse, $author$project$Days$Day9$calculateNextNumberHelper)),
 			A2($elm$core$Basics$composeR, $elm$core$List$sum, $elm$core$String$fromInt))));
 var $author$project$Main$puzzles = _List_fromArray(
 	[

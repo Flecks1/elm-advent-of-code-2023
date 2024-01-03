@@ -4,51 +4,23 @@ import List.Extra as List
 import Maybe.Extra as Maybe
 import Parser exposing ((|.), (|=), Parser, Step(..))
 import Puzzle
-import Set
+import Utils.NumberSequenceSolver
 import Utils.Parser as Parser
 
 
 first : Puzzle.Solution
 first =
-    parseSequences >> Result.map (List.map getNextNumberInSequence >> List.sum >> String.fromInt)
+    parseSequences >> Result.map (List.map calculateNextNumberHelper >> List.sum >> String.fromInt)
 
 
 second : Puzzle.Solution
 second =
-    parseSequences >> Result.map (List.map (List.reverse >> getNextNumberInSequence) >> List.sum >> String.fromInt)
+    parseSequences >> Result.map (List.map (List.reverse >> calculateNextNumberHelper) >> List.sum >> String.fromInt)
 
 
-getNextNumberInSequence : List Int -> Int
-getNextNumberInSequence sequence =
-    let
-        -- Note: We parse the sequences and store them in reverse order to facilitate the summing of the last numbers in the decomposed sequences down the line
-        getAllDifferences x ( lastNumber, differences ) =
-            ( Just x, lastNumber |> Maybe.unwrap differences (\y -> (x - y) :: differences) )
-
-        getDifferencesInSequence =
-            List.foldr getAllDifferences ( Nothing, [] ) >> Tuple.second
-
-        recursiveHelper continuation sequence_ =
-            let
-                differences =
-                    getDifferencesInSequence sequence_
-            in
-            case ( Set.fromList differences |> Set.toList, differences ) of
-                ( [ x ], _ ) ->
-                    x |> continuation
-
-                ( _, x :: _ ) ->
-                    differences |> recursiveHelper (\y -> x + y |> continuation)
-
-                _ ->
-                    0
-    in
-    case sequence of
-        x :: _ ->
-            sequence |> recursiveHelper (\y -> x + y)
-
-        _ ->
-            0
+calculateNextNumberHelper : List Int -> Int
+calculateNextNumberHelper =
+    Utils.NumberSequenceSolver.getDecomposedSequence >> Maybe.unwrap 0 List.sum
 
 
 
@@ -75,9 +47,9 @@ sequenceParser =
                     |= potentiallyNegativeIntParser
                     |. Parser.symbol " "
                     |> Parser.backtrackable
-                , Parser.succeed (\number -> number :: numbers |> Done)
+                , Parser.succeed (\number -> number :: numbers |> List.reverse |> Done)
                     |= potentiallyNegativeIntParser
-                    |. Parser.symbol "\n"
+                    |. Parser.oneOf [ Parser.symbol "\n", Parser.end ]
                     |> Parser.backtrackable
                 ]
         )
